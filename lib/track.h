@@ -27,6 +27,7 @@ struct sync_track {
 	char *name;
 	struct track_key *keys;
 	int num_keys;
+	int precision;
 };
 
 int sync_find_key(const struct sync_track *, int);

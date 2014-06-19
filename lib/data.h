@@ -12,6 +12,7 @@ struct sync_data {
 	size_t num_tracks;
 };
 
+#ifndef INLINE_DATA
 static inline int sync_find_track(const struct sync_data *data,
     const char *name)
 {
@@ -23,6 +24,7 @@ static inline int sync_find_track(const struct sync_data *data,
 }
 
 void sync_data_deinit(struct sync_data *);
+#endif
 int sync_create_track(struct sync_data *, const char *);
 
 #endif /* SYNC_DATA_H */

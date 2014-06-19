@@ -13,27 +13,27 @@
 #include "track.h"
 #include "base.h"
 
-static double key_linear(const struct track_key k[2], double row)
+static float key_linear(const struct track_key k[2], float row)
 {
-	double t = (row - k[0].row) / (k[1].row - k[0].row);
+	float t = (row - k[0].row) / (k[1].row - k[0].row);
 	return k[0].value + (k[1].value - k[0].value) * t;
 }
 
-static double key_smooth(const struct track_key k[2], double row)
+static float key_smooth(const struct track_key k[2], float row)
 {
-	double t = (row - k[0].row) / (k[1].row - k[0].row);
+	float t = (row - k[0].row) / (k[1].row - k[0].row);
 	t = t * t * (3 - 2 * t);
 	return k[0].value + (k[1].value - k[0].value) * t;
 }
 
-static double key_ramp(const struct track_key k[2], double row)
+static float key_ramp(const struct track_key k[2], float row)
 {
-	double t = (row - k[0].row) / (k[1].row - k[0].row);
-	t = pow(t, 2.0);
+	float t = (row - k[0].row) / (k[1].row - k[0].row);
+	t = powf(t, 2.0);
 	return k[0].value + (k[1].value - k[0].value) * t;
 }
 
-double sync_get_val(const struct sync_track *t, double row)
+float sync_get_val(const struct sync_track *t, float row)
 {
 	int idx, irow;
 
@@ -91,6 +91,11 @@ int sync_find_key(const struct sync_track *t, int row)
 #ifndef SYNC_PLAYER
 int sync_set_key(struct sync_track *t, const struct track_key *k)
 {
+	union {
+		float f;
+		uint32_t i;
+	} u;
+
 	int idx = sync_find_key(t, k->row);
 	if (idx < 0) {
 		/* no exact hit, we need to allocate a new key */
@@ -106,6 +111,14 @@ int sync_set_key(struct sync_track *t, const struct track_key *k)
 		    sizeof(struct track_key) * (t->num_keys - idx - 1));
 	}
 	t->keys[idx] = *k;
+
+	/* quantize the mantissa */
+	u.f = k->value;
+	if (t->precision > 23)
+		t->precision = 23;
+	u.i &= 0xffffffff << (23 - t->precision);
+	t->keys[idx].value = u.f;
+
 	return 0;
 }
 

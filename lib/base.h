@@ -5,6 +5,9 @@
 #ifndef SYNC_BASE_H
 #define SYNC_BASE_H
 
+#define INLINE_DATA
+void* StaticAlloc(int size);
+
 /* configure inline keyword */
 #if (!defined(__STDC_VERSION__) || (__STDC_VERSION__ < 199901L)) && !defined(__cplusplus)
  #if defined(_MSC_VER) || defined(__GNUC__) || defined(__SASC)

@@ -12,7 +12,7 @@ extern "C" {
 struct sync_device;
 struct sync_track;
 
-struct sync_device *sync_create_device(const char *);
+struct sync_device *sync_create_device(const char *, char *data);
 void sync_destroy_device(struct sync_device *);
 
 #ifndef SYNC_PLAYER
@@ -34,8 +34,10 @@ struct sync_io_cb {
 void sync_set_io_cb(struct sync_device *d, struct sync_io_cb *cb);
 #endif /* defined(SYNC_PLAYER) */
 
-const struct sync_track *sync_get_track(struct sync_device *, const char *);
-double sync_get_val(const struct sync_track *, double);
+const struct sync_track *sync_get_track(struct sync_device *, const char *, int bits);
+/* #define sync_get_track(x, y) sync_get_track(x, y, 24) */
+
+float sync_get_val(const struct sync_track *, float);
 
 #ifdef __cplusplus
 }

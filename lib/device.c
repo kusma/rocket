@@ -4,9 +4,13 @@
 
 #include "device.h"
 #include "sync.h"
+
+#ifndef SYNC_PLAYER
 #include <stdio.h>
 #include <math.h>
+#endif
 
+#ifndef INLINE_DATA
 static const char *sync_track_path(const char *base, const char *name)
 {
 	static char temp[FILENAME_MAX];
@@ -17,6 +21,7 @@ static const char *sync_track_path(const char *base, const char *name)
 	strncat(temp, ".track", sizeof(temp) - 1);
 	return temp;
 }
+#endif
 
 #ifndef SYNC_PLAYER
 
@@ -82,17 +87,75 @@ static SOCKET server_connect(const char *host, unsigned short nport)
 
 #else
 
+#ifndef INLINE_DATA
 void sync_set_io_cb(struct sync_device *d, struct sync_io_cb *cb)
 {
 	d->io_cb.open = cb->open;
 	d->io_cb.read = cb->read;
 	d->io_cb.close = cb->close;
 }
-
+#endif
 #endif
 
-struct sync_device *sync_create_device(const char *base)
+#ifdef SYNC_PLAYER
+#ifdef INLINE_DATA
+static char allocbuffer[2000000], *allocbufferptr=allocbuffer;
+void* StaticAlloc(int size)
 {
+	allocbufferptr+=size;
+	return allocbufferptr-size;
+}
+#endif
+#endif
+
+struct sync_device *sync_create_device(const char *base, char *data)
+{
+#ifdef INLINE_DATA
+#ifdef SYNC_PLAYER
+	struct sync_device *d= StaticAlloc(sizeof(*d));
+#else
+	struct sync_device *d = malloc(sizeof(*d));
+	d->base = data;
+#endif
+#ifndef SYNC_PLAYER
+	d->base = strdup(base);
+	d->data.tracks = 0;
+#else
+	d->data.tracks = StaticAlloc(1000*4);
+
+	d->data.num_tracks = 0;
+	const char* src = data;
+	int tracknum, i;
+	int dataoffset = 0;
+	int numtracks = *src++;
+	for (tracknum = 0; tracknum < numtracks; tracknum++)
+	{
+		int lastrow = 0;
+		struct sync_track *t = StaticAlloc(sizeof(*t));
+		d->data.tracks[tracknum] = t;
+		int keys = *((short*)src); src += 2;
+		t->num_keys = keys;
+		t->keys = StaticAlloc(sizeof(struct track_key) * t->num_keys);
+		for (i = 0; i < (int)t->num_keys; ++i)
+		{
+			struct track_key *key = t->keys + i;
+			lastrow += *(unsigned short*)src; src += 2;
+			key->type = lastrow >> 14;
+			lastrow &= 0x3fff;
+			key->row = lastrow;
+		}
+	}
+	for (tracknum = 0; tracknum < numtracks; tracknum++)
+	{
+		for (i = 0; i < (int)d->data.tracks[tracknum]->num_keys; ++i)
+		{
+			d->data.tracks[tracknum]->keys[i].value = *(float*)src;
+			src += 4;
+		}
+	}
+#endif
+
+#else // !inline_data
 	struct sync_device *d = malloc(sizeof(*d));
 	if (!d)
 		return NULL;
@@ -104,20 +167,24 @@ struct sync_device *sync_create_device(const char *base)
 	}
 
 	d->data.tracks = NULL;
+#endif
 	d->data.num_tracks = 0;
 
 #ifndef SYNC_PLAYER
 	d->row = -1;
 	d->sock = INVALID_SOCKET;
 #else
+#ifndef INLINE_DATA
 	d->io_cb.open = fopen;
 	d->io_cb.read = fread;
 	d->io_cb.close = fclose;
+#endif
 #endif
 
 	return d;
 }
 
+#ifndef INLINE_DATA
 void sync_destroy_device(struct sync_device *d)
 {
 	free(d->base);
@@ -131,9 +198,10 @@ void sync_destroy_device(struct sync_device *d)
 	}
 #endif
 }
+#endif
 
 #ifdef SYNC_PLAYER
-
+#ifndef INLINE_DATA
 static int get_track_data(struct sync_device *d, struct sync_track *t)
 {
 	int i;
@@ -159,8 +227,10 @@ static int get_track_data(struct sync_device *d, struct sync_track *t)
 	return 0;
 }
 
+#endif
 #else
 
+#ifndef INLINE_DATA
 static int save_track(const struct sync_track *t, const char *path)
 {
 	int i;
@@ -179,14 +249,73 @@ static int save_track(const struct sync_track *t, const char *path)
 	fclose(fp);
 	return 0;
 }
+#endif
 
 void sync_save_tracks(const struct sync_device *d)
 {
+#ifdef INLINE_DATA
+	int i, j;
+	unsigned short last;
+	size_t numtracks;
+
+	FILE *fp = fopen("sync.bin", "wb");
+	if (!fp)
+		return;
+
+	numtracks = d->data.num_tracks;
+	fwrite(&numtracks, 1, 1, fp);
+	/*
+	for (i = 0; i < (int)d->data.num_tracks; ++i)
+	{
+		const struct sync_track *t = d->data.tracks[i];
+		short numkeys = t->num_keys;
+		//fwrite(t->name,1,strlen(t->name)+1,fp);
+		fwrite(&numkeys, sizeof(short), 1, fp);
+		last=0;
+		for (j = 0; j < (int)t->num_keys; ++j)
+		{
+			float vf = t->keys[j].value,vf2;
+			unsigned v= *(unsigned*)(&vf);
+			char type = (char)t->keys[j].type;
+			unsigned short s = (unsigned short)(t->keys[j].row-last); last+=s;
+			fwrite(&s, sizeof(short), 1, fp);
+			v&=0xffffff00;
+			vf2 = *(float*)&v;
+			fwrite(&v, sizeof(float), 1, fp);
+			fwrite(&type, sizeof(char), 1, fp);
+		}
+	}*/
+
+	/* write row-deltas */
+	for (i = 0; i < (int)d->data.num_tracks; ++i) {
+		const struct sync_track *t = d->data.tracks[i];
+		int numkeys = t->num_keys;
+		fwrite(&numkeys, sizeof(short), 1, fp);
+		last = 0;
+		for (j = 0; j < (int)t->num_keys; ++j) {
+			unsigned short s = (unsigned short)(t->keys[j].row - last);
+			last += s;
+			assert(s < 0xc000);
+			s |= (int)t->keys[j].type << 14;
+			fwrite(&s, sizeof(short), 1, fp);
+		}
+	}
+
+	/* write all values */
+	for (i = 0; i < (int)d->data.num_tracks; ++i) {
+		const struct sync_track *t = d->data.tracks[i];
+		for (j = 0; j < (int)t->num_keys; ++j)
+			fwrite(&t->keys[j].value, sizeof(float), 1, fp);
+	}
+
+	fclose(fp);
+#else
 	int i;
 	for (i = 0; i < (int)d->data.num_tracks; ++i) {
 		const struct sync_track *t = d->data.tracks[i];
 		save_track(t, sync_track_path(d->base, t->name));
 	}
+#endif
 }
 
 static int get_track_data(struct sync_device *d, struct sync_track *t)
@@ -343,9 +472,10 @@ sockerr:
 #endif
 
 const struct sync_track *sync_get_track(struct sync_device *d,
-    const char *name)
+    const char *name, int precision)
 {
 	struct sync_track *t;
+#ifndef INLINE_DATA
 	int idx = sync_find_track(&d->data, name);
 	if (idx >= 0)
 		return d->data.tracks[idx];
@@ -355,4 +485,15 @@ const struct sync_track *sync_get_track(struct sync_device *d,
 
 	get_track_data(d, t);
 	return t;
+#else
+#ifndef SYNC_PLAYER
+	int idx = sync_create_track(&d->data, name);
+	t = d->data.tracks[idx];
+	t->precision = precision;
+	get_track_data(d, t);
+	return t;
+#else
+	return d->data.tracks[d->data.num_tracks++];
+#endif
+#endif
 }
