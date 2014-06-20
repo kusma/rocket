@@ -6,29 +6,11 @@
 #include "track.h"
 #include "base.h"
 
-static double key_linear(const struct track_key k[2], double row)
-{
-	double t = (row - k[0].row) / (k[1].row - k[0].row);
-	return k[0].value + (k[1].value - k[0].value) * t;
-}
-
-static double key_smooth(const struct track_key k[2], double row)
-{
-	double t = (row - k[0].row) / (k[1].row - k[0].row);
-	t = t * t * (3 - 2 * t);
-	return k[0].value + (k[1].value - k[0].value) * t;
-}
-
-static double key_ramp(const struct track_key k[2], double row)
-{
-	double t = (row - k[0].row) / (k[1].row - k[0].row);
-	t = pow(t, 2.0);
-	return k[0].value + (k[1].value - k[0].value) * t;
-}
-
 double sync_get_val(const struct sync_track *t, double row)
 {
 	int idx, irow;
+	double a, b, c, d;
+	double x, mag;
 
 	/* If we have no keys at all, return a constant 0 */
 	if (!t->num_keys)
@@ -43,20 +25,38 @@ double sync_get_val(const struct sync_track *t, double row)
 	if (idx > (int)t->num_keys - 2)
 		return t->keys[t->num_keys - 1].value;
 
-	/* interpolate according to key-type */
+	a = t->keys[idx].value;
+	mag = t->keys[idx + 1].value - t->keys[idx].value;
+
+	/* set up curve-coefficients according to key-type */
 	switch (t->keys[idx].type) {
 	case KEY_STEP:
-		return t->keys[idx].value;
+		b = c = d = 0.0f;
+		break;
+
 	case KEY_LINEAR:
-		return key_linear(t->keys + idx, row);
+		b = mag;
+		c = d = 0.0f;
+		break;
+
 	case KEY_SMOOTH:
-		return key_smooth(t->keys + idx, row);
+		b =  0.0f;
+		c =  3 * mag;
+		d = -2 * mag;
+		break;
+
 	case KEY_RAMP:
-		return key_ramp(t->keys + idx, row);
+		b = d = 0.0f;
+		c = mag;
+		break;
+
 	default:
 		assert(0);
 		return 0.0f;
 	}
+
+	x = (row - t->keys[idx].row) / (t->keys[idx + 1].row - t->keys[idx].row);
+	return a + (b + (c + d * x) * x) * x;
 }
 
 int sync_find_key(const struct sync_track *t, int row)
