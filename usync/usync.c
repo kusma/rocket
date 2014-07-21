@@ -10,7 +10,7 @@ void usync_update(float t)
 {
 	int i, row = (int)floor(t);
 	for (i = 0; i < SYNC_TRACK_COUNT; ++i) {
-		int pos;
+		int pos, track_offs = sync_data_offset[i];
 		float mag, x, a, b, c, d;
 
 		/* empty tracks should not be neccesary! */
@@ -21,11 +21,11 @@ void usync_update(float t)
 
 		/* step forward until we're at the right key-frame */
 		while (usync_rows[i] < (sync_data_count[i] - 1) &&
-		       row >= sync_data_rows[usync_rows[i] + 1]) {
+		       row >= sync_data_rows[track_offs + usync_rows[i] + 1]) {
 			usync_rows[i]++;
 		}
 
-		pos = usync_rows[i] + sync_data_offset[i];
+		pos = usync_rows[i] + track_offs;
 
 		/* we need a segment to interpolate over */
 		if (usync_rows[i] == sync_data_count[i] - 1) {
