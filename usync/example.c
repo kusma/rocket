@@ -20,7 +20,7 @@ int main(void)
 		printf("%f: %f\n", row, usync_get_val(foo));
 		row += 1.0f / 4; /* step one 4th of a row */
 	}
-	usync_export();
+	usync_export("sync-data.h");
 }
 
 #ifndef SYNC_PLAYER

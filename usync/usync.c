@@ -86,11 +86,11 @@ int usync_init(void)
 	return sync_connect(usync_dev, "localhost", SYNC_DEFAULT_PORT);
 }
 
-void usync_export(void)
+void usync_export(const char *path)
 {
 	int i, j;
 	int offset = 0;
-	FILE *fp = fopen("sync-data.h", "w");
+	FILE *fp = fopen(path, "w");
 
 	if (!fp)
 		return;

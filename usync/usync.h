@@ -23,7 +23,7 @@ extern float usync_time;
 int usync_init(void);
 void usync_update(float t);
 #define usync_get_val(track) sync_get_val(sync_get_track(usync_dev, #track), usync_time)
-void usync_export(void);
+void usync_export(const char *path);
 
 /* implement these yourself */
 extern struct sync_cb usync_cb;
