@@ -45,10 +45,23 @@ cache:
   directories:
     - deps
 
+env:
+  global:
+   # COVERITY_SCAN:
+   - secure: "FdNY3GGU0/oyCGsQZfoumTgwU//FTARCHFgBlf3dBLWRlw4zO0FOuPsXP3Oaem9kY2c57Qn3a/edee+ZHivc/lXjP3Unr8791jR1C1VJV4uernpheIxSETpTfXPP3GQRhLPqCv8gr1n7EIAg2uvnpBrKlZeQVogTNfPkFN5kGG4="
+
 addons:
   apt:
     packages:
       - libsdl1.2-dev
+  coverity_scan:
+    project:
+      name: "kusma/rocket"
+      description: "GNU Rocket"
+    notification_email: kusmabite@gmail.com
+    build_command_prepend: ""
+    build_command: "make all examples/example_bass examples/example_bass-player"
+    branch_pattern: coverity_scan
 
 before_deploy:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
