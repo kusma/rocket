@@ -1,5 +1,7 @@
 *.a
 *.db
+*.la
+*.lo
 *.lib
 *.ncb
 *.o
@@ -17,11 +19,22 @@ ui_*.h
 .DS_Store
 .qmake.stash
 *~
+.deps/
+.libs/
+aclocal.m4
+config.log
+config.status
+configure
+libtool
+Makefile.in
+/autom4te.cache/
+/config/
 /Debug Client/
 /Debug/
 /Release Client/
 /Release/
-/editor/Makefile*
+/editor/Makefile
+/editor/Makefile.qmake
 /editor/editor.vcproj
 /editor/editor.vcxproj
 /editor/editor.vcxproj.filters
@@ -30,6 +43,7 @@ ui_*.h
 /editor/release/
 /editor/editor/
 /editor/editor.app/
+/examples/Makefile
 /examples/example_bass
 /examples/Debug Client/
 /examples/Debug/
@@ -39,11 +53,13 @@ ui_*.h
 /examples/include/
 /examples/lib/
 /examples/lib64/
+/lib/Makefile
 /lib/Debug Client/
 /lib/Debug/
 /lib/Release Client/
 /lib/Release/
 /lib/x64/
+/Makefile
 /packages/
 /x64/
 build-*

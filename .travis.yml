@@ -35,9 +35,12 @@ before_script:
     fi
 
 script:
-  - make &&
-    make examples/example_bass &&
-    make examples/example_bass-player
+  - autoreconf -i &&
+    mkdir build && (
+      cd build &&
+      ../configure --with-bass=`pwd`/../bass24 &&
+      make
+    )
 
 cache:
   directories:
