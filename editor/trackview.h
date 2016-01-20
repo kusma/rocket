@@ -8,6 +8,7 @@
 
 class QLineEdit;
 class SyncDocument;
+class SyncPage;
 class SyncTrack;
 
 class TrackView : public QAbstractScrollArea
@@ -17,12 +18,7 @@ public:
 	TrackView(QWidget *parent);
 	~TrackView();
 
-	void setDocument(SyncDocument *document)
-	{
-		this->document = document;
-		this->setupScrollBars();
-	}
-
+	void setDocument(SyncDocument *document);
 	const SyncDocument *getDocument() const { return document; }
 	SyncDocument *getDocument() { return document; }
 
@@ -149,6 +145,8 @@ private:
 
 	int getTrackFromLogicalX(int x) const;
 	int getTrackFromPhysicalX(int x) const;
+
+	SyncPage *page;
 
 	int selectStartTrack, selectStopTrack;
 	int selectStartRow, selectStopRow;
