@@ -41,7 +41,7 @@ Makefile.in
 /editor/editor.sln
 /editor/debug/
 /editor/release/
-/editor/editor/
+/editor/editor
 /editor/editor.app/
 /examples/Makefile
 /examples/example_bass
