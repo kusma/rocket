@@ -2,6 +2,7 @@ TEMPLATE = app
 TARGET = editor
 DEPENDPATH += .
 INCLUDEPATH += .
+CONFIG += silent
 
 QT = core gui xml network
 
