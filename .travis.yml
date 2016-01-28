@@ -10,7 +10,9 @@ before_script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew update &&
       brew install qt &&
-      brew install sdl;
+      brew install sdl &&
+      export GL_CFLAGS=" " GL_LIBS="-framework OpenGL" &&
+      export GLU_CFLAGS=" " GLU_LIBS=" ";
     fi
   - if [ ! -f deps/bass24.zip ]; then
         mkdir -p deps && (
