@@ -2,6 +2,7 @@ TEMPLATE = app
 TARGET = editor
 DEPENDPATH += .
 INCLUDEPATH += .
+QMAKE_CLEAN += $(QMAKE_TARGET)
 CONFIG += silent
 
 QT = core gui xml network
