@@ -36,9 +36,8 @@ public:
 
 	void selectNone()
 	{
-		selectStartTrack = selectStopTrack = editTrack;
-		selectStartRow = selectStopRow = editRow;
-		update();
+		setSelection(QRect(QPoint(editTrack, editRow),
+		                   QPoint(editTrack, editRow)));
 	}
 
 	void dirtyCurrentValue()
@@ -64,6 +63,8 @@ private slots:
 	void onHScroll(int value);
 	void onVScroll(int value);
 	void onEditingFinished();
+	void onTrackHeaderChanged(int trackIndex);
+	void onTrackDataChanged(int trackIndex, int start, int stop);
 
 public slots:
 	void editUndo();
@@ -97,42 +98,13 @@ private:
 	void setScrollPos(int newScrollPosX, int newScrollPosY);
 	void scrollWindow(int newScrollPosX, int newScrollPosY);
 
-	void invalidateRange(int startTrack, int stopTrack, int startRow, int stopRow)
-	{
-		QRect rect(QPoint(getPhysicalX(qMin(startTrack, stopTrack)),
-		                  getPhysicalY(qMin(startRow, stopRow))),
-		           QPoint(getPhysicalX(qMax(startTrack, stopTrack) + 1) - 1,
-		                  getPhysicalY(qMax(startRow, stopRow) + 1) - 1));
-		viewport()->update(rect);
-	}
-
-	void invalidatePos(int track, int row)
-	{
-		invalidateRange(track, track, row, row);
-	}
-
-	void invalidateRow(int row)
-	{
-		invalidateRange(0, getTrackCount(), row, row);
-	}
-
-	void invalidateTrack(int track)
-	{
-		invalidateRange(track, track, 0, getRows());
-	}
-
-	void invalidateAll()
-	{
-		invalidateRange(0, getTrackCount(), 0, getRows());
-	}
-
 	QRect getSelection() const
 	{
-		return QRect(QPoint(qMin(selectStartTrack, selectStopTrack),
-		                    qMin(selectStartRow, selectStopRow)),
-		             QPoint(qMax(selectStartTrack, selectStopTrack),
-		                    qMax(selectStartRow, selectStopRow)));
+		return QRect(selectionStart, selectionStart).united(QRect(selectionEnd, selectionEnd));
 	}
+
+	void setSelection(const QRect &rect);
+	void updateSelection(const QPoint &pos, bool selecting);
 
 	int getLogicalX(int track) const;
 	int getLogicalY(int row) const;
@@ -144,8 +116,8 @@ private:
 
 	SyncPage *page;
 
-	int selectStartTrack, selectStopTrack;
-	int selectStartRow, selectStopRow;
+	QPoint selectionStart;
+	QPoint selectionEnd;
 
 	int rowHeight;
 	int trackWidth;

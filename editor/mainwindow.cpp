@@ -317,7 +317,6 @@ void MainWindow::setDocument(SyncDocument *newDoc)
 	                 this, SLOT(setWindowModified(bool)));
 
 	currentTrackView->dirtyCurrentValue();
-	currentTrackView->viewport()->update();
 }
 
 void MainWindow::fileNew()
@@ -572,8 +571,6 @@ void MainWindow::onTrackRequested(const QString &trackName)
 		clientSocket->sendSetKeyCommand(t->getName(), *it);
 
 	t->setActive(true);
-
-	currentTrackView->update();
 }
 
 void MainWindow::onRowChanged(int row)
@@ -677,6 +674,5 @@ void MainWindow::onDisconnected()
 		clientSocket = NULL;
 	}
 
-	currentTrackView->update();
 	setStatusText("Not Connected.");
 }
