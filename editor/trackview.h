@@ -6,8 +6,9 @@
 #include <QKeyEvent>
 #include <QPainter>
 
+#include "syncpage.h"
+
 class QLineEdit;
-class SyncDocument;
 class SyncPage;
 class SyncTrack;
 
@@ -15,12 +16,7 @@ class TrackView : public QAbstractScrollArea
 {
 	Q_OBJECT
 public:
-	TrackView(QWidget *parent);
-	~TrackView();
-
-	void setDocument(SyncDocument *document);
-	const SyncDocument *getDocument() const { return document; }
-	SyncDocument *getDocument() { return document; }
+	TrackView(SyncPage *page, QWidget *parent);
 
 	void setRows(int rows);
 	int getRows() const;
@@ -170,8 +166,6 @@ private:
 
 	int scrollPosX,  scrollPosY;
 	int windowRows;
-
-	SyncDocument *document;
 
 	QLineEdit *lineEdit;
 

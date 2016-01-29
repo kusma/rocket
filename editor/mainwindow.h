@@ -7,10 +7,12 @@
 
 class QLabel;
 class QAction;
+class QTabWidget;
 class QTcpServer;
 class QWebSocketServer;
 
 class SyncDocument;
+class SyncPage;
 class TrackView;
 class ClientSocket;
 
@@ -34,6 +36,9 @@ public:
 	void setStatusValue(double val, bool valid);
 	void setStatusKeyType(const SyncTrack::TrackKey::KeyType keyType);
 
+	TrackView *addTrackView(SyncPage *page);
+	void setTrackView(TrackView *trackView);
+
 	QTcpServer *tcpServer;
 	QWebSocketServer *wsServer;
 
@@ -41,6 +46,8 @@ public:
 
 	SyncDocument *doc;
 
+	QTabWidget *tabWidget;
+	QList<TrackView *> trackViews;
 	TrackView *trackView;
 
 	QLabel *statusPos, *statusValue, *statusKeyType;
@@ -88,6 +95,9 @@ private slots:
 #endif
 	void onConnected();
 	void onDisconnected();
+
+	void onSyncPageAdded(SyncPage *);
+	void onTabChanged(int index);
 };
 
 #endif // MAINWINDOW_H
