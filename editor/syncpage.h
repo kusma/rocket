@@ -34,24 +34,14 @@ public:
 
 public slots:
 	// TODO: tighter invalidation on all of these!
-	void onKeyFrameAdded(const SyncTrack &track, int)
-	{
-		invalidateTrack(track);
-	}
-
-	void onKeyFrameChanged(const SyncTrack &track, int, const SyncTrack::TrackKey &)
-	{
-		invalidateTrack(track);
-	}
-
-	void onKeyFrameRemoved(const SyncTrack &track, int)
-	{
-		invalidateTrack(track);
-	}
+	void onKeyFrameAdded(const SyncTrack &track, int);
+	void onKeyFrameChanged(const SyncTrack &track, int, const SyncTrack::TrackKey &);
+	void onKeyFrameRemoved(const SyncTrack &track, int);
 
 private:
 	void invalidateTrack(const SyncTrack &track);
 	void invalidateTrackData(const SyncTrack &track, int start, int stop);
+	void invalidateTrackData(const SyncTrack &track);
 
 	SyncDocument *document;
 	QString name;

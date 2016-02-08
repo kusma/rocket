@@ -46,12 +46,42 @@ void SyncPage::invalidateTrack(const SyncTrack &track)
 	int trackIndex = tracks.indexOf((SyncTrack*)&track);
 	Q_ASSERT(trackIndex >= 0);
 	emit trackHeaderChanged(trackIndex);
-	emit trackDataChanged(trackIndex, 0, document->getRows());
+	invalidateTrackData(track);
 }
 
 void SyncPage::invalidateTrackData(const SyncTrack &track, int start, int stop)
 {
 	int trackIndex = tracks.indexOf((SyncTrack*)&track);
 	Q_ASSERT(trackIndex >= 0);
+	Q_ASSERT(start <= stop);
 	emit trackDataChanged(trackIndex, start, stop);
+}
+
+void SyncPage::invalidateTrackData(const SyncTrack &track)
+{
+	invalidateTrackData(track, 0, document->getRows());
+}
+
+void SyncPage::onKeyFrameAdded(const SyncTrack &track, int)
+{
+	// TODO: invalidate range
+	invalidateTrackData(track);
+}
+
+void SyncPage::onKeyFrameChanged(const SyncTrack &track, int row, const SyncTrack::TrackKey &oldKey)
+{
+	SyncTrack::TrackKey newKey = track.getKeyFrame(row);
+	Q_ASSERT(newKey.row == oldKey.row);
+
+	if (newKey.type != oldKey.type) {
+		// TODO: invalidate range
+		invalidateTrackData(track);
+	} else
+		invalidateTrackData(track, row, row);
+}
+
+void SyncPage::onKeyFrameRemoved(const SyncTrack &track, int)
+{
+	// TODO: invalidate range
+	invalidateTrackData(track);
 }
