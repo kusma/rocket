@@ -464,7 +464,7 @@ void MainWindow::onPosChanged(int col, int row)
 
 void MainWindow::onCurrValDirty()
 {
-	if (doc && doc->getTrackCount() > 0) {
+	if (doc && trackView->getTrackCount() > 0) {
 		const SyncTrack *t = trackView->getTrack(trackView->getEditTrack());
 		int row = trackView->getEditRow();
 
