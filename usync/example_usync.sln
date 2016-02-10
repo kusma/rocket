@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "i1k_D3D9Shader", "example_usync.vcxproj", "{DE81EADA-82E6-4561-9DF7-74970348710F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Sync|Win32 = Sync|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DE81EADA-82E6-4561-9DF7-74970348710F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DE81EADA-82E6-4561-9DF7-74970348710F}.Debug|Win32.Build.0 = Debug|Win32
+		{DE81EADA-82E6-4561-9DF7-74970348710F}.Release|Win32.ActiveCfg = Release|Win32
+		{DE81EADA-82E6-4561-9DF7-74970348710F}.Release|Win32.Build.0 = Release|Win32
+		{DE81EADA-82E6-4561-9DF7-74970348710F}.Sync|Win32.ActiveCfg = Sync|Win32
+		{DE81EADA-82E6-4561-9DF7-74970348710F}.Sync|Win32.Build.0 = Sync|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
