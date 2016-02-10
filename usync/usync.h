@@ -1,6 +1,10 @@
 #ifndef USYNC_H
 #define USYNC_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef SYNC_PLAYER
 
 #include "sync-data.h"
@@ -30,5 +34,9 @@ extern struct sync_cb usync_cb;
 extern void *usync_data;
 
 #endif /* !defined(SYNC_PLAYER) */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !defined(USYNC_H) */
