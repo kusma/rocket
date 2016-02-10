@@ -8,7 +8,7 @@ float usync_values[SYNC_TRACK_COUNT];
 
 void usync_update(float t)
 {
-	int i, row = (int)floor(t);
+	int i, row = (int)t;
 	for (i = 0; i < SYNC_TRACK_COUNT; ++i) {
 		int pos, track_offs = sync_data_offset[i];
 		float mag, x, a, b, c, d;
