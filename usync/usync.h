@@ -31,7 +31,7 @@ void usync_export(const char *path);
 
 /* implement these yourself */
 extern struct sync_cb usync_cb;
-extern void *usync_data;
+extern void *usync_cb_data;
 
 #endif /* !defined(SYNC_PLAYER) */
 

@@ -45,5 +45,5 @@ struct sync_cb usync_cb = {
 	is_playing
 };
 
-void *usync_data = NULL;
+void *usync_cb_data = NULL;
 #endif

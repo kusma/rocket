@@ -77,7 +77,7 @@ float usync_time = 0;
 void usync_update(float t)
 {
 	usync_time = t;
-	sync_update(usync_dev, (int)floor(t), &usync_cb, usync_data);
+	sync_update(usync_dev, (int)floor(t), &usync_cb, usync_cb_data);
 }
 
 int usync_init(void)
