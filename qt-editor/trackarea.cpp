@@ -38,12 +38,12 @@ TrackArea::TrackArea(QWidget *parent) :
 
 	// HACK: add some data!
 	for (int i = 0; i < 10; ++i) {
-		Track *track = new Track(QString("track %1").arg(i + 1));
+		SyncTrack  *track = new SyncTrack(QString("track %1").arg(i + 1));
 		syncPage->addTrack(track);
 		for (int i = 0; i < 20; ++i) {
-			Track::KeyFrame key;
+			SyncTrack::KeyFrame key;
 			key.value = qrand() / (RAND_MAX * 0.5f);
-			key.type = Track::KeyFrame::Step;
+			key.type = SyncTrack::KeyFrame::Step;
 			track->setKeyFrame(qrand() % 128, key);
 		}
 	}

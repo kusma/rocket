@@ -19,7 +19,7 @@ SyncPageNameView::SyncPageNameView(SyncPage *syncPage, QWidget *parent) :
 	connect(syncPage, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
 }
 
-void SyncPageNameView::trackAdded(Track *track)
+void SyncPageNameView::trackAdded(SyncTrack *track)
 {
 	QToolButton *trackNameView = new QToolButton();
 	trackNameView->setText(track->getName());

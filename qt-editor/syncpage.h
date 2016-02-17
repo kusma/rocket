@@ -3,13 +3,13 @@
 
 #include <QObject>
 #include <QList>
-class Track;
+class SyncTrack;
 
 class SyncPage : public QObject {
 	Q_OBJECT
 
 public:
-	void addTrack(Track *track)
+	void addTrack(SyncTrack  *track)
 	{
 		tracks.push_back(track);
 		emit trackAdded(track);
@@ -22,11 +22,11 @@ public:
 	}
 
 signals:
-	void trackAdded(Track *track);
+	void trackAdded(SyncTrack  *track);
 	void trackRemoved(int index);
 
 private:
-	QList<Track *> tracks;
+	QList<SyncTrack  *> tracks;
 };
 
 #endif // TRACKGROUP_H

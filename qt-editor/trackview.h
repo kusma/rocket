@@ -10,12 +10,12 @@
 
 class QHBoxLayout;
 class QLabel;
-class Track;
+class SyncTrack;
 
 class TrackView : public QWidget {
 	Q_OBJECT
 public:
-	TrackView(Track *track, QWidget *parent = 0) :
+	TrackView(SyncTrack *track, QWidget *parent = 0) :
 		QWidget(parent),
 		track(track),
 		rowHilight(-1)
@@ -43,7 +43,7 @@ protected:
 	void paintEvent(QPaintEvent *event);
 	void changeEvent(QEvent *event);
 
-	Track *track;
+	SyncTrack *track;
 	int rowHilight;
 };
 

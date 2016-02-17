@@ -4,9 +4,9 @@
 #include <QMap>
 #include <QString>
 
-class Track {
+class SyncTrack {
 public:
-	Track(const QString &name) : name(name) {}
+	SyncTrack(const QString &name) : name(name) {}
 
 	struct KeyFrame {
 		float value;

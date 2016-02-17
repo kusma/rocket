@@ -4,7 +4,7 @@
 #include <QWidget>
 
 class SyncPage;
-class Track;
+class SyncTrack;
 class QToolButton;
 
 class SyncPageNameView : public QWidget {
@@ -13,7 +13,7 @@ public:
 	explicit SyncPageNameView(SyncPage *syncPage, QWidget *parent = 0);
 
 private slots:
-	void trackAdded(Track *track);
+	void trackAdded(SyncTrack *track);
 	void trackRemoved(int index);
 
 private:

@@ -6,7 +6,7 @@
 class SyncPage;
 class TrackView;
 class QHBoxLayout;
-class Track;
+class SyncTrack;
 
 class SyncPageView : public QWidget {
 	Q_OBJECT
@@ -26,7 +26,7 @@ public:
 	QRect getCurrentTrackRect() const;
 
 private slots:
-	void trackAdded(Track *track);
+	void trackAdded(SyncTrack *track);
 	void trackRemoved(int index);
 
 protected:

@@ -21,7 +21,7 @@ SyncPageView::SyncPageView(SyncPage *syncPage, QWidget *parent) :
 	connect(syncPage, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
 }
 
-void SyncPageView::trackAdded(Track *track)
+void SyncPageView::trackAdded(SyncTrack *track)
 {
 	TrackView *trackView = new TrackView(track);
 	trackViews.append(trackView);
