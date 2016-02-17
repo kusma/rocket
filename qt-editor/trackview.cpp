@@ -18,11 +18,6 @@ void TrackView::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
 
-	for (int i = 0; i < event->region().rectCount(); ++i) {
-		QRect rect = event->region().rects()[i];
-		qDebug("rect %d: %d, %d, %d, %d", i, rect.left(), rect.top(), rect.width(), rect.height());
-	}
-
 	QRect rect;
 	rect.setLeft(0);
 	rect.setRight(width());
