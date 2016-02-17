@@ -7,7 +7,7 @@
 #include <QPaintEvent>
 #include <QStylePainter>
 
-TrackGroupNameView::TrackGroupNameView(TrackGroup *trackGroup, QWidget *parent) :
+SyncPageNameView::SyncPageNameView(SyncPage *syncPage, QWidget *parent) :
 	QWidget(parent)
 {
 	QHBoxLayout *layout = new QHBoxLayout();
@@ -15,11 +15,11 @@ TrackGroupNameView::TrackGroupNameView(TrackGroup *trackGroup, QWidget *parent) 
 	layout->setSpacing(1);
 	setLayout(layout);
 
-	connect(trackGroup, SIGNAL(trackAdded(Track *)), this, SLOT(trackAdded(Track *)));
-	connect(trackGroup, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
+	connect(syncPage, SIGNAL(trackAdded(Track *)), this, SLOT(trackAdded(Track *)));
+	connect(syncPage, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
 }
 
-void TrackGroupNameView::trackAdded(Track *track)
+void SyncPageNameView::trackAdded(Track *track)
 {
 	QToolButton *trackNameView = new QToolButton();
 	trackNameView->setText(track->getName());
@@ -33,7 +33,7 @@ void TrackGroupNameView::trackAdded(Track *track)
 	adjustSize();
 }
 
-void TrackGroupNameView::trackRemoved(int index)
+void SyncPageNameView::trackRemoved(int index)
 {
 	QWidget *trackNameView = trackNameViews[index];
 	layout()->removeWidget(trackNameView);

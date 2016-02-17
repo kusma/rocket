@@ -3,16 +3,16 @@
 
 #include <QWidget>
 
-class TrackGroup;
+class SyncPage;
 class TrackView;
 class QHBoxLayout;
 class Track;
 
-class TrackGroupView : public QWidget {
+class SyncPageView : public QWidget {
 	Q_OBJECT
 
 public:
-	TrackGroupView(TrackGroup *trackGroup, QWidget *parent = 0);
+	SyncPageView(SyncPage *syncPage, QWidget *parent = 0);
 
 	int getRow() { return currRow; }
 	void setRow(int row);
@@ -32,7 +32,7 @@ private slots:
 protected:
 	void changeEvent(QEvent *event);
 
-	TrackGroup *trackGroup;
+	SyncPage *syncPage;
 	QList<TrackView *> trackViews;
 	int currRow, currCol;
 	int rowCount;

@@ -5,9 +5,9 @@
 #include <QApplication>
 #include <QHBoxLayout>
 
-TrackGroupView::TrackGroupView(TrackGroup *trackGroup, QWidget *parent) :
+SyncPageView::SyncPageView(SyncPage *syncPage, QWidget *parent) :
 	QWidget(parent),
-	trackGroup(trackGroup),
+	syncPage(syncPage),
 	currRow(-1),
 	currCol(-1)
 {
@@ -17,11 +17,11 @@ TrackGroupView::TrackGroupView(TrackGroup *trackGroup, QWidget *parent) :
 	setLayout(layout);
 	setRowCount(128);
 
-	connect(trackGroup, SIGNAL(trackAdded(Track *)), this, SLOT(trackAdded(Track *)));
-	connect(trackGroup, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
+	connect(syncPage, SIGNAL(trackAdded(Track *)), this, SLOT(trackAdded(Track *)));
+	connect(syncPage, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
 }
 
-void TrackGroupView::trackAdded(Track *track)
+void SyncPageView::trackAdded(Track *track)
 {
 	TrackView *trackView = new TrackView(track);
 	trackViews.append(trackView);
@@ -30,7 +30,7 @@ void TrackGroupView::trackAdded(Track *track)
 	adjustSize();
 }
 
-void TrackGroupView::trackRemoved(int index)
+void SyncPageView::trackRemoved(int index)
 {
 	TrackView *trackView = trackViews[index];
 	layout()->removeWidget(trackView);
@@ -39,7 +39,7 @@ void TrackGroupView::trackRemoved(int index)
 	adjustSize();
 }
 
-QRect TrackGroupView::getCurrentTrackRect() const
+QRect SyncPageView::getCurrentTrackRect() const
 {
 	if (currCol < 0)
 		return QRect(0, 0, 0, 0);
@@ -48,7 +48,7 @@ QRect TrackGroupView::getCurrentTrackRect() const
 	return trackViews[currCol]->geometry();
 }
 
-void TrackGroupView::setRow(int row)
+void SyncPageView::setRow(int row)
 {
 	Q_ASSERT(row >= 0 && row < rowCount);
 
@@ -60,7 +60,7 @@ void TrackGroupView::setRow(int row)
 	currRow = row;
 }
 
-void TrackGroupView::setCol(int col)
+void SyncPageView::setCol(int col)
 {
 	if (!trackViews.size())
 		return;
@@ -76,13 +76,13 @@ void TrackGroupView::setCol(int col)
 		QApplication::beep();
 }
 
-void TrackGroupView::setRowCount(int rows)
+void SyncPageView::setRowCount(int rows)
 {
 	setFixedHeight(fontMetrics().lineSpacing() * rows);
 	rowCount = rows;
 }
 
-void TrackGroupView::changeEvent(QEvent *event)
+void SyncPageView::changeEvent(QEvent *event)
 {
 	if (event->type() == QEvent::FontChange) {
 		Q_ASSERT(fontInfo().fixedPitch());

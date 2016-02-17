@@ -5,7 +5,7 @@
 #include <QList>
 class Track;
 
-class TrackGroup : public QObject {
+class SyncPage : public QObject {
 	Q_OBJECT
 
 public:

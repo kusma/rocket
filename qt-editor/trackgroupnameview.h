@@ -3,21 +3,21 @@
 
 #include <QWidget>
 
-class TrackGroup;
+class SyncPage;
 class Track;
 class QToolButton;
 
-class TrackGroupNameView : public QWidget {
+class SyncPageNameView : public QWidget {
 	Q_OBJECT
 public:
-	explicit TrackGroupNameView(TrackGroup *trackGroup, QWidget *parent = 0);
+	explicit SyncPageNameView(SyncPage *syncPage, QWidget *parent = 0);
 
 private slots:
 	void trackAdded(Track *track);
 	void trackRemoved(int index);
 
 private:
-	TrackGroup *trackGroup;
+	SyncPage *syncPage;
 	QList<QWidget *> trackNameViews;
 };
 

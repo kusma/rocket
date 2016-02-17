@@ -3,8 +3,8 @@
 
 #include <QScrollArea>
 
-class TrackGroupView;
-class TrackGroupNameView;
+class SyncPageView;
+class SyncPageNameView;
 class RowNumberView;
 
 class TrackArea : public QScrollArea {
@@ -18,16 +18,14 @@ public:
 	int getRowCount() const;
 	void setRowCount(int rows);
 
-	TrackGroupView *getTrackGroupView() { return trackGroupView; }
-
 protected:
 	void scrollContentsBy(int dx, int dy);
 	void updateHScrollbar();
 	void updateVScrollbar();
 	void keyPressEvent(QKeyEvent *event);
 	void resizeEvent(QResizeEvent *event);
-	TrackGroupView *trackGroupView;
-	TrackGroupNameView *trackGroupNameView;
+	SyncPageView *syncPageView;
+	SyncPageNameView *syncPageNameView;
 	RowNumberView *rowNumberView;
 };
 
