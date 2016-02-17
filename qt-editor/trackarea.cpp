@@ -1,6 +1,6 @@
 #include "trackarea.h"
-#include "trackgroup.h"
-#include "trackgroupview.h"
+#include "syncpage.h"
+#include "syncpageview.h"
 #include "trackview.h"
 #include "rownumberview.h"
 #include "track.h"

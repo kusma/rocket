@@ -1,6 +1,6 @@
-#include "trackgroupview.h"
+#include "syncpageview.h"
 #include "trackview.h"
-#include "trackgroup.h"
+#include "syncpage.h"
 
 #include <QApplication>
 #include <QHBoxLayout>

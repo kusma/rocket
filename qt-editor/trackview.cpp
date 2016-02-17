@@ -1,5 +1,4 @@
 #include "trackview.h"
-#include "trackgroupview.h"
 
 #include <QApplication>
 #include <QPainter>
@@ -13,6 +12,7 @@
 #include <QDebug>
 
 #include "track.h"
+#include "syncpageview.h"
 
 void TrackView::paintEvent(QPaintEvent *event)
 {

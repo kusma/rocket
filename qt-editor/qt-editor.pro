@@ -12,8 +12,8 @@ HEADERS += \
     rownumberview.h \
     track.h \
     trackarea.h \
-    trackgroup.h \
-    trackgroupview.h \
+    syncpage.h \
+    syncpageview.h \
     trackgroupnameview.h \
     trackview.h
 
@@ -25,7 +25,7 @@ SOURCES += \
     rownumberview.cpp \
     track.cpp \
     trackarea.cpp \
-    trackgroup.cpp \
-    trackgroupview.cpp \
+    syncpage.cpp \
+    syncpageview.cpp \
     trackgroupnameview.cpp \
     trackview.cpp
