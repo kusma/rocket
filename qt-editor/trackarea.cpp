@@ -28,9 +28,9 @@ TrackArea::TrackArea(QWidget *parent) :
 
 	setAlignment(Qt::AlignCenter);
 
+	trackGroupNameView = new TrackGroupNameView(trackGroup, this);
 	rowNumberView = new RowNumberView(this);
 	rowNumberView->setFont(this->font());
-	trackGroupNameView = new TrackGroupNameView(trackGroup, this);
 
 	setFrameShape(QFrame::NoFrame);
 	setBackgroundRole(QPalette::Dark);
