@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 HEADERS += \
     mainwindow.h \
     rownumberview.h \
-    track.h \
+    synctrack.h \
     trackarea.h \
     syncpage.h \
     syncpageview.h \
@@ -23,7 +23,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     rownumberview.cpp \
-    track.cpp \
+    synctrack.cpp \
     trackarea.cpp \
     syncpage.cpp \
     syncpageview.cpp \
