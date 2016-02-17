@@ -15,7 +15,7 @@ SyncPageNameView::SyncPageNameView(SyncPage *syncPage, QWidget *parent) :
 	layout->setSpacing(1);
 	setLayout(layout);
 
-	connect(syncPage, SIGNAL(trackAdded(Track *)), this, SLOT(trackAdded(Track *)));
+	connect(syncPage, SIGNAL(trackAdded(SyncTrack *)), this, SLOT(trackAdded(SyncTrack *)));
 	connect(syncPage, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
 }
 

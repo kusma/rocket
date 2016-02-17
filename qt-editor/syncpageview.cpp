@@ -17,7 +17,7 @@ SyncPageView::SyncPageView(SyncPage *syncPage, QWidget *parent) :
 	setLayout(layout);
 	setRowCount(128);
 
-	connect(syncPage, SIGNAL(trackAdded(Track *)), this, SLOT(trackAdded(Track *)));
+	connect(syncPage, SIGNAL(trackAdded(SyncTrack *)), this, SLOT(trackAdded(SyncTrack *)));
 	connect(syncPage, SIGNAL(trackRemoved(int)), this, SLOT(trackRemoved(int)));
 }
 
