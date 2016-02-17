@@ -11,7 +11,7 @@
 #include <QLabel>
 #include <QDebug>
 
-#include "synctrack.h"
+#include "track.h"
 #include "syncpageview.h"
 
 void TrackView::paintEvent(QPaintEvent *event)
