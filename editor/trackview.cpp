@@ -652,6 +652,8 @@ void TrackView::setEditTrack(int newEditTrack, bool autoscroll, bool selecting)
 
 	if (oldEditTrack != editTrack) {
 		updateSelection(QPoint(editTrack, editRow), selecting);
+		onTrackHeaderChanged(oldEditTrack);
+		onTrackHeaderChanged(editTrack);
 		dirtyPosition();
 		dirtyCurrentValue();
 	}
