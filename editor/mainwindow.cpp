@@ -286,12 +286,12 @@ void MainWindow::setDocument(SyncDocument *newDoc)
 			for (it = keyMap.constBegin(); it != keyMap.constEnd(); ++it)
 				t->removeKey(it.key());
 
-			QObject::disconnect(t, SIGNAL(keyFrameAdded(const SyncTrack &, int)),
-			                    clientSocket, SLOT(onKeyFrameAdded(const SyncTrack &, int)));
-			QObject::disconnect(t, SIGNAL(keyFrameChanged(const SyncTrack &, int, const SyncTrack::TrackKey &)),
-			                    clientSocket, SLOT(onKeyFrameChanged(const SyncTrack &, int, const SyncTrack::TrackKey &)));
-			QObject::disconnect(t, SIGNAL(keyFrameRemoved(const SyncTrack &, int)),
-			                    clientSocket, SLOT(onKeyFrameRemoved(const SyncTrack &, int)));
+			QObject::disconnect(t, SIGNAL(keyFrameAdded(int)),
+			                    clientSocket, SLOT(onKeyFrameAdded(int)));
+			QObject::disconnect(t, SIGNAL(keyFrameChanged(int, const SyncTrack::TrackKey &)),
+			                    clientSocket, SLOT(onKeyFrameChanged(int, const SyncTrack::TrackKey &)));
+			QObject::disconnect(t, SIGNAL(keyFrameRemoved(int)),
+			                    clientSocket, SLOT(onKeyFrameRemoved(int)));
 		}
 
 		if (newDoc) {
@@ -310,12 +310,12 @@ void MainWindow::setDocument(SyncDocument *newDoc)
 				for (it = keyMap.constBegin(); it != keyMap.constEnd(); ++it)
 					clientSocket->sendSetKeyCommand(t->getName(), *it);
 
-				QObject::connect(t, SIGNAL(keyFrameAdded(const SyncTrack &, int)),
-				                 clientSocket, SLOT(onKeyFrameAdded(const SyncTrack &, int)));
-				QObject::connect(t, SIGNAL(keyFrameChanged(const SyncTrack &, int, const SyncTrack::TrackKey &)),
-				                 clientSocket, SLOT(onKeyFrameChanged(const SyncTrack &, int, const SyncTrack::TrackKey &)));
-				QObject::connect(t, SIGNAL(keyFrameRemoved(const SyncTrack &, int)),
-				                 clientSocket, SLOT(onKeyFrameRemoved(const SyncTrack &, int)));
+				QObject::connect(t, SIGNAL(keyFrameAdded(int)),
+				                 clientSocket, SLOT(onKeyFrameAdded(int)));
+				QObject::connect(t, SIGNAL(keyFrameChanged(int, const SyncTrack::TrackKey &)),
+				                 clientSocket, SLOT(onKeyFrameChanged(int, const SyncTrack::TrackKey &)));
+				QObject::connect(t, SIGNAL(keyFrameRemoved(int)),
+				                 clientSocket, SLOT(onKeyFrameRemoved(int)));
 			}
 		}
 	}

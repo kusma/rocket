@@ -34,9 +34,9 @@ public:
 
 public slots:
 	// TODO: tighter invalidation on all of these!
-	void onKeyFrameAdded(const SyncTrack &track, int);
-	void onKeyFrameChanged(const SyncTrack &track, int, const SyncTrack::TrackKey &);
-	void onKeyFrameRemoved(const SyncTrack &track, int);
+	void onKeyFrameAdded(int);
+	void onKeyFrameChanged(int, const SyncTrack::TrackKey &);
+	void onKeyFrameRemoved(int);
 
 private:
 	void invalidateTrack(const SyncTrack &track);

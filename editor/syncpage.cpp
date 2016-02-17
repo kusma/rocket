@@ -24,12 +24,12 @@ const SyncTrack *SyncPage::getTrack(int index) const
 void SyncPage::addTrack(SyncTrack *track)
 {
 	tracks.push_back(track);
-	QObject::connect(track, SIGNAL(keyFrameAdded(const SyncTrack &, int)),
-	                 this,  SLOT(onKeyFrameAdded(const SyncTrack &, int)));
-	QObject::connect(track, SIGNAL(keyFrameChanged(const SyncTrack &, int, const SyncTrack::TrackKey &)),
-	                 this,  SLOT(onKeyFrameChanged(const SyncTrack &, int, const SyncTrack::TrackKey &)));
-	QObject::connect(track, SIGNAL(keyFrameRemoved(const SyncTrack &, int)),
-	                 this,  SLOT(onKeyFrameRemoved(const SyncTrack &, int)));
+	QObject::connect(track, SIGNAL(keyFrameAdded(int)),
+	                 this,  SLOT(onKeyFrameAdded(int)));
+	QObject::connect(track, SIGNAL(keyFrameChanged(int, const SyncTrack::TrackKey &)),
+	                 this,  SLOT(onKeyFrameChanged(int, const SyncTrack::TrackKey &)));
+	QObject::connect(track, SIGNAL(keyFrameRemoved(int)),
+	                 this,  SLOT(onKeyFrameRemoved(int)));
 }
 
 void SyncPage::swapTrackOrder(int t1, int t2)
@@ -62,26 +62,31 @@ void SyncPage::invalidateTrackData(const SyncTrack &track)
 	invalidateTrackData(track, 0, document->getRows());
 }
 
-void SyncPage::onKeyFrameAdded(const SyncTrack &track, int)
+void SyncPage::onKeyFrameAdded(int)
 {
+	const SyncTrack *track = qobject_cast<SyncTrack *>(sender());
+
 	// TODO: invalidate range
-	invalidateTrackData(track);
+	invalidateTrackData(*track);
 }
 
-void SyncPage::onKeyFrameChanged(const SyncTrack &track, int row, const SyncTrack::TrackKey &oldKey)
+void SyncPage::onKeyFrameChanged(int row, const SyncTrack::TrackKey &oldKey)
 {
-	SyncTrack::TrackKey newKey = track.getKeyFrame(row);
+	const SyncTrack *track = qobject_cast<SyncTrack *>(sender());
+
+	SyncTrack::TrackKey newKey = track->getKeyFrame(row);
 	Q_ASSERT(newKey.row == oldKey.row);
 
 	if (newKey.type != oldKey.type) {
 		// TODO: invalidate range
-		invalidateTrackData(track);
+		invalidateTrackData(*track);
 	} else
-		invalidateTrackData(track, row, row);
+		invalidateTrackData(*track, row, row);
 }
 
-void SyncPage::onKeyFrameRemoved(const SyncTrack &track, int)
+void SyncPage::onKeyFrameRemoved(int)
 {
+	const SyncTrack *track = qobject_cast<SyncTrack *>(sender());
 	// TODO: invalidate range
-	invalidateTrackData(track);
+	invalidateTrackData(*track);
 }
