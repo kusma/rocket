@@ -14,6 +14,49 @@
 #include "synctrack.h"
 #include "syncpageview.h"
 
+static QColor lerp(const QColor &a, const QColor &b, float t)
+{
+	QColor result;
+	result.setRedF(a.redF() + (b.redF() - a.redF()) * t);
+	result.setGreenF(a.greenF() + (b.greenF() - a.greenF()) * t);
+	result.setBlueF(a.blueF() + (b.blueF() - a.blueF()) * t);
+	result.setAlphaF(a.alphaF() + (b.alphaF() - a.alphaF()) * t);
+	return result;
+}
+
+QBrush TrackView::getBackgroundBrush(int row) const
+{
+	if (isHighlit(row))
+		return palette().highlight().color();
+	else {
+		QColor baseColor = row % 8 ?
+		                   palette().base().color() :
+		                   palette().alternateBase().color();
+
+		const SyncTrack::TrackKey *prevKey = track->getPrevKeyFrame(row);
+		if (!prevKey)
+			return QBrush(baseColor);
+
+		QColor typeColor;
+		switch (prevKey->type) {
+		case SyncTrack::TrackKey::LINEAR:
+			typeColor = Qt::red;
+			break;
+		case SyncTrack::TrackKey::RAMP:
+			typeColor = Qt::green;
+			break;
+		case SyncTrack::TrackKey::SMOOTH:
+			typeColor = Qt::blue;
+			break;
+
+		default:
+			return QBrush(baseColor);
+		}
+
+		return QBrush(lerp(baseColor, typeColor, 0.125f));
+	}
+}
+
 void TrackView::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);

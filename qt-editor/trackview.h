@@ -39,14 +39,7 @@ public:
 		return row == rowHilight;
 	}
 
-	QBrush getBackgroundBrush(int row) const
-	{
-		if (isHighlit(row))
-			return palette().highlight();
-		else
-			return row % 8 ? palette().base() : palette().alternateBase();
-	}
-
+	QBrush getBackgroundBrush(int row) const;
 	QColor getTextColor(int row) const
 	{
 		if (isHighlit(row))

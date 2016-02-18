@@ -45,7 +45,7 @@ TrackArea::TrackArea(QWidget *parent) :
 			SyncTrack::TrackKey key;
 			key.row = qrand() % 128;
 			key.value = qrand() / (RAND_MAX * 0.5f);
-			key.type = SyncTrack::TrackKey::STEP;
+			key.type = (SyncTrack::TrackKey::KeyType)(qrand() % SyncTrack::TrackKey::KEY_TYPE_COUNT);
 			track->setKey(key);
 		}
 	}
