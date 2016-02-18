@@ -38,13 +38,15 @@ TrackArea::TrackArea(QWidget *parent) :
 
 	// HACK: add some data!
 	for (int i = 0; i < 10; ++i) {
-		SyncTrack  *track = new SyncTrack(QString("track %1").arg(i + 1));
+		QString name = QString("track %1").arg(i + 1);
+		SyncTrack  *track = new SyncTrack(name, name);
 		syncPage->addTrack(track);
 		for (int i = 0; i < 20; ++i) {
-			SyncTrack::KeyFrame key;
+			SyncTrack::TrackKey key;
+			key.row = qrand() % 128;
 			key.value = qrand() / (RAND_MAX * 0.5f);
-			key.type = SyncTrack::KeyFrame::Step;
-			track->setKeyFrame(qrand() % 128, key);
+			key.type = SyncTrack::TrackKey::STEP;
+			track->setKey(key);
 		}
 	}
 	syncPageView->setCol(0);
