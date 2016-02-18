@@ -33,7 +33,7 @@ void TrackView::paintEvent(QPaintEvent *event)
 			continue;
 
 		QRect clipRect = rect.intersected(event->rect());
-		if (r == rowHilight) {
+		if (isHighlit(r)) {
 			painter.fillRect(clipRect, palette().highlight());
 			painter.setPen(palette().color(QPalette::HighlightedText));
 		} else {

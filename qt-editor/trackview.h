@@ -34,6 +34,11 @@ public:
 			updateRow(row);
 	}
 
+	bool isHighlit(int row) const
+	{
+		return row == rowHilight;
+	}
+
 	void updateRow(int row)
 	{
 		update(0, row * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
