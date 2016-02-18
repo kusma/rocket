@@ -1,6 +1,6 @@
 #include "trackgroupnameview.h"
 #include "syncpage.h"
-#include "track.h"
+#include "synctrack.h"
 
 #include <QToolButton>
 #include <QHBoxLayout>

@@ -33,14 +33,8 @@ void TrackView::paintEvent(QPaintEvent *event)
 			continue;
 
 		QRect clipRect = rect.intersected(event->rect());
-		if (isHighlit(r)) {
-			painter.fillRect(clipRect, palette().highlight());
-			painter.setPen(palette().color(QPalette::HighlightedText));
-		} else {
-			painter.fillRect(clipRect, r % 8 ?
-			                 palette().base() : palette().alternateBase());
-			painter.setPen(palette().color(QPalette::WindowText));
-		}
+		painter.fillRect(clipRect, getBackgroundBrush(r));
+		painter.setPen(getTextColor(r));
 
 		QString temp = QString("---");
 		if (track->isKeyFrame(r))

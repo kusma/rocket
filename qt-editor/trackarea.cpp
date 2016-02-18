@@ -3,7 +3,7 @@
 #include "syncpageview.h"
 #include "trackview.h"
 #include "rownumberview.h"
-#include "track.h"
+#include "synctrack.h"
 #include "trackgroupnameview.h"
 
 #include <QScrollBar>

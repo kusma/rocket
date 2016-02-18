@@ -39,6 +39,22 @@ public:
 		return row == rowHilight;
 	}
 
+	QBrush getBackgroundBrush(int row) const
+	{
+		if (isHighlit(row))
+			return palette().highlight();
+		else
+			return row % 8 ? palette().base() : palette().alternateBase();
+	}
+
+	QColor getTextColor(int row) const
+	{
+		if (isHighlit(row))
+			return palette().highlightedText().color();
+		else
+			return palette().windowText().color();
+	}
+
 	void updateRow(int row)
 	{
 		update(0, row * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
