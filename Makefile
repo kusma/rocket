@@ -1,7 +1,7 @@
 # default target
 all:
 
-.PHONY: all clean editor
+.PHONY: all check clean editor
 
 QMAKE ?= qmake
 
@@ -46,11 +46,20 @@ examples/%$X: CXXFLAGS += $(SDL_CFLAGS)
 examples/%$X: LDLIBS += -Lexamples/lib -lbass
 examples/%$X: LDLIBS += $(OPENGL_LIBS) $(SDL_LIBS)
 
+tests/test_%$X: tests/test_%.c tests/test.o
+	 $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+tests/test_track$X: lib/librocket.a
+
+check: tests/test_track$X
+	tests/test_track$X
+
 clean:
 	$(RM) $(LIB_OBJS) lib/librocket.a lib/librocket-player.a
 	$(RM) examples/example_bass$X examples/example_bass-player$X
 	if test -e editor/Makefile; then $(MAKE) -C editor clean; fi;
 	$(RM) editor/editor editor/Makefile
+	$(RM) tests/test.o tests/test_track.o tests/test_track$X
 
 lib/librocket.a: $(LIB_OBJS)
 	$(AR) $(ARFLAGS) $@ $^
