@@ -35,12 +35,17 @@ before_script:
     else
       export VERSION_TAG=$TRAVIS_BRANCH;
     fi
+  - pip install --user cpp-coveralls
 
 script:
-  - make check
+  - CFLAGS="-fprofile-arcs -ftest-coverage" make check &&
+    make clean
   - make &&
     make examples/example_bass &&
     make examples/example_bass-player
+
+after_success:
+  - coveralls --include lib --gcov-options '\-lp'
 
 cache:
   directories:
