@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <setjmp.h>
 
 static int passed_tests, failed_tests;
+static jmp_buf error;
 
 int test_log(const char *fmt, ...)
 {
@@ -16,9 +18,8 @@ int test_log(const char *fmt, ...)
 
 void test_run(const char *name, int (*test_fn)(void))
 {
-	int ret = test_fn();
-
-	if (!ret) {
+	if (!setjmp(error)) {
+		test_fn();
 		passed_tests++;
 		test_log("ok: %s\n", name);
 	} else {
@@ -34,7 +35,8 @@ int test_fail(const char *file, int line, const char *fmt, ...)
 	va_start(va, fmt);
 	vfprintf(stderr, fmt, va);
 	va_end(va);
-	return 1;
+
+	longjmp(error, -1);
 }
 
 int test_report(void)
