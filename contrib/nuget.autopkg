@@ -1,0 +1,39 @@
+nuget {
+	nuspec {
+		id = librocket;
+		version : 0.1.0;
+		title: GNU Rocket library;
+		authors: {Erik Faye-Lund};
+		owners: {Erik Faye-Lund};
+		licenseUrl: "https://raw.githubusercontent.com/kusma/rocket/master/COPYING";
+		projectUrl: "https://github.com/kusma/rocket";
+		iconUrl: "https://raw.githubusercontent.com/kusma/rocket/master/contrib/logo.svg";
+		requireLicenseAcceptance:false;
+		summary: GNU Rocket library;
+
+		description: @"GNU Rocket library";
+		releaseNotes: "Initial release";
+		copyright: Copyright 2016 GNU Rocket Foundation;
+		tags: { native };
+	}
+
+	files {
+		include: { "..\lib\sync.h" };
+
+		[Win32, Release] {
+			lib: ..\VS2013\Win32\Release\librocket.lib;
+		}
+
+		[Win32, Debug] {
+			lib: ..\VS2013\Win32\Debug\librocketd.lib;
+		}
+
+		[x64, Release] {
+			lib: ..\VS2013\x64\Release\librocket.lib;
+		}
+
+		[x64,debug] {
+			lib: ..\VS2013\x64\Debug\librocketd.lib;
+		}
+	}
+}

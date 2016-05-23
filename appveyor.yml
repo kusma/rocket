@@ -6,6 +6,10 @@ cache:
   - bass24.zip
 
 install:
+  - ps: (new-object net.webclient).DownloadFile('http://coapp.org/files/CoApp.Tools.Powershell.msi', 'C:\CoApp.Tools.Powershell.msi')
+  - ps: Start-Process -FilePath msiexec -ArgumentList /i, 'C:\CoApp.Tools.Powershell.msi', /quiet -Wait
+  - ps: $env:PSModulePath = $env:PSModulePath + ';C:\Program Files (x86)\Outercurve Foundation\Modules'
+  - ps: Import-Module CoApp
   - nuget restore examples.vs2013.sln
 
 before_build:
@@ -46,6 +50,7 @@ after_build:
   - copy x64\editor.exe staging-x64\
   - C:\Qt\5.6\msvc2015_64\bin\windeployqt --release staging-x64\editor.exe
   - cd ..
+  - Write-NuGetPackage contrib/nuget.autopkg
 
 artifacts:
   - path: editor\staging-x64
