@@ -1,18 +1,5 @@
+os: Visual Studio 2013
 version: '{build}'
-
-environment:
-  matrix:
-  - platform: x64
-    cc: VS2013
-    QTDIR: C:\Qt\5.5\msvc2013_64
-    PLATFORM_TAG: win64
-  - platform: Win32
-    cc: VS2013
-    QTDIR: C:\Qt\5.5\msvc2013
-    PLATFORM_TAG: win32
-
-configuration:
-  - Release
 
 cache:
   - packages -> **\packages.config
@@ -27,25 +14,36 @@ before_build:
   - if not defined APPVEYOR_REPO_TAG_NAME set VERSION_TAG=%APPVEYOR_REPO_BRANCH%
 
 build_script:
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="Win32"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="Win32"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="Win32"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="Win32"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="x64"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="x64"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="x64"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="x64"
   - cd editor
-  - qmake -tp vc editor.pro
-  - msbuild /v:minimal /nologo
+  - C:\Qt\5.6\msvc2013\bin\qmake -tp vc editor.pro
+  - msbuild /v:minimal /nologo /p:Configuration="Release" /p:Platform="Win32" /p:OutDir="Win32\\"
+  - C:\Qt\5.6\msvc2013_64\bin\qmake -tp vc editor.pro
+  - msbuild /v:minimal /nologo /p:Configuration="Release" /p:Platform="x64" /p:OutDir="x64\\"
   - cd ..
 
 after_build:
   - cd editor
-  - mkdir staging
-  - copy release\editor.exe staging
-  - windeployqt --release staging\editor.exe
+  - mkdir staging-Win32
+  - copy Win32\editor.exe staging-Win32\
+  - C:\Qt\5.6\msvc2013\bin\windeployqt --release staging-Win32\editor.exe
+  - mkdir staging-x64
+  - copy x64\editor.exe staging-x64\
+  - C:\Qt\5.6\msvc2013_64\bin\windeployqt --release staging-x64\editor.exe
   - cd ..
 
 artifacts:
-  - path: editor\staging
-    name: rocket-editor-$(VERSION_TAG)-$(PLATFORM_TAG)
+  - path: editor\staging-x64
+    name: rocket-editor-$(VERSION_TAG)-win64
+  - path: editor\staging-Win32
+    name: rocket-editor-$(VERSION_TAG)-win32
 
 deploy:
   provider: GitHub
