@@ -50,7 +50,7 @@ after_build:
   - copy x64\editor.exe staging-x64\
   - C:\Qt\5.6\msvc2015_64\bin\windeployqt --release staging-x64\editor.exe
   - cd ..
-  - Write-NuGetPackage contrib/nuget.autopkg
+  - ps: Write-NuGetPackage contrib/nuget.autopkg
 
 artifacts:
   - path: editor\staging-x64
