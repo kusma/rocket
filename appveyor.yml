@@ -27,8 +27,10 @@ before_build:
   - if not defined APPVEYOR_REPO_TAG_NAME set VERSION_TAG=%APPVEYOR_REPO_BRANCH%
 
 build_script:
-  - msbuild examples.vs2013.sln /v:minimal /nologo
-  - msbuild examples.vs2013.sln /v:minimal /nologo /property:Configuration="Release Client"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client"
   - cd editor
   - qmake -tp vc editor.pro
   - msbuild /v:minimal /nologo
