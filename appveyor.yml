@@ -53,6 +53,7 @@ after_build:
   - ps: Write-NuGetPackage contrib/nuget.autopkg
 
 artifacts:
+  - path: librocket.0.1.0.nupkg
   - path: editor\staging-x64
     name: rocket-editor-$(VERSION_TAG)-win64
   - path: editor\staging-Win32
