@@ -34,12 +34,14 @@ build_script:
   - cd editor
   - qmake -tp vc editor.pro
   - msbuild /v:minimal /nologo
+  - cd ..
 
 after_build:
+  - cd editor
   - mkdir staging
-  - cd staging
-  - copy ..\release\editor.exe .
-  - windeployqt --release editor.exe
+  - copy release\editor.exe staging
+  - windeployqt --release staging\editor.exe
+  - cd ..
 
 artifacts:
   - path: editor\staging
