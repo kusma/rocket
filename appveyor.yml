@@ -1,4 +1,4 @@
-os: Visual Studio 2013
+os: Visual Studio 2015
 version: '{build}'
 
 cache:
@@ -14,18 +14,26 @@ before_build:
   - if not defined APPVEYOR_REPO_TAG_NAME set VERSION_TAG=%APPVEYOR_REPO_BRANCH%
 
 build_script:
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="Win32"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="Win32"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="Win32"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="Win32"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="x64"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="x64"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="x64"
-  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="x64"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="Win32" /p:OutDir="VS2013\Win32\Debug\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="Win32" /p:OutDir="VS2013\Win32\Debug Client\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="Win32" /p:OutDir="VS2013\Win32\Release\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="Win32" /p:OutDir="VS2013\Win32\Release Client\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="x64" /p:OutDir="VS2013\x64\Debug\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="x64" /p:OutDir="VS2013\x64\Debug Client\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="x64" /p:OutDir="VS2013\x64\Release\\"
+  - msbuild examples.vs2013.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="x64" /p:OutDir="VS2013\x64\Release Client\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="Win32" /p:OutDir="VS2015\Win32\Debug\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="Win32" /p:OutDir="VS2015\Win32\Debug Client\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="Win32" /p:OutDir="VS2015\Win32\Release\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="Win32" /p:OutDir="VS2015\Win32\Release Client\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Debug" /p:Platform="x64" /p:OutDir="VS2015\x64\Debug\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Debug Client" /p:Platform="x64" /p:OutDir="VS2015\x64\Debug Client\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Release" /p:Platform="x64" /p:OutDir="VS2015\x64\Release\\"
+  - msbuild examples.vs2015.sln /v:minimal /nologo /p:Configuration="Release Client" /p:Platform="x64" /p:OutDir="VS2015\x64\Release Client\\"
   - cd editor
-  - C:\Qt\5.6\msvc2013\bin\qmake -tp vc editor.pro
+  - C:\Qt\5.6\msvc2015\bin\qmake -tp vc editor.pro
   - msbuild /v:minimal /nologo /p:Configuration="Release" /p:Platform="Win32" /p:OutDir="Win32\\"
-  - C:\Qt\5.6\msvc2013_64\bin\qmake -tp vc editor.pro
+  - C:\Qt\5.6\msvc2015_64\bin\qmake -tp vc editor.pro
   - msbuild /v:minimal /nologo /p:Configuration="Release" /p:Platform="x64" /p:OutDir="x64\\"
   - cd ..
 
@@ -33,10 +41,10 @@ after_build:
   - cd editor
   - mkdir staging-Win32
   - copy Win32\editor.exe staging-Win32\
-  - C:\Qt\5.6\msvc2013\bin\windeployqt --release staging-Win32\editor.exe
+  - C:\Qt\5.6\msvc2015\bin\windeployqt --release staging-Win32\editor.exe
   - mkdir staging-x64
   - copy x64\editor.exe staging-x64\
-  - C:\Qt\5.6\msvc2013_64\bin\windeployqt --release staging-x64\editor.exe
+  - C:\Qt\5.6\msvc2015_64\bin\windeployqt --release staging-x64\editor.exe
   - cd ..
 
 artifacts:
