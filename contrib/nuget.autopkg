@@ -33,7 +33,7 @@ nuget {
 			lib: ..\lib\VS2013\Win32\Release\librocket-player.lib;
 		}
 
-		[Win32, Release, Client] {
+		[Win32, Release] {
 			lib: ..\lib\VS2013\Win32\Release Client\librocket.lib;
 		}
 
@@ -41,7 +41,7 @@ nuget {
 			lib: ..\lib\VS2013\Win32\Debug\librocket-playerd.lib;
 		}
 
-		[Win32, Debug, Client] {
+		[Win32, Debug] {
 			lib: ..\lib\VS2013\Win32\Debug Client\librocketd.lib;
 		}
 
@@ -49,7 +49,7 @@ nuget {
 			lib: ..\lib\VS2013\x64\Release\librocket-player.lib;
 		}
 
-		[x64, Release, Client] {
+		[x64, Release] {
 			lib: ..\lib\VS2013\x64\Release Client\librocket.lib;
 		}
 
@@ -57,7 +57,7 @@ nuget {
 			lib: ..\lib\VS2013\x64\Debug\librocket-playerd.lib;
 		}
 
-		[x64, Debug, Client] {
+		[x64, Debug] {
 			lib: ..\lib\VS2013\x64\Debug Client\librocketd.lib;
 		}
 	}
