@@ -6,8 +6,8 @@ cache:
   - bass24.zip
 
 install:
-  - ps: (New-Object Net.WebClient).DownloadFile('http://coapp.org/files/CoApp.Tools.Powershell.msi', 'C:\CoApp.Tools.Powershell.msi')
-  - ps: Start-Process -FilePath msiexec -ArgumentList /i, 'C:\CoApp.Tools.Powershell.msi', /quiet -Wait
+  - ps: (New-Object Net.WebClient).DownloadFile('http://coapp.org/files/CoApp.Tools.Powershell.msi', "$($env:USERPROFILE)\CoApp.Tools.Powershell.msi")
+  - ps: Start-Process -FilePath msiexec -ArgumentList /i, "$($env:USERPROFILE)\CoApp.Tools.Powershell.msi", /quiet -Wait
   - ps: $env:PSModulePath = $env:PSModulePath + ';C:\Program Files (x86)\Outercurve Foundation\Modules'
   - ps: Import-Module CoApp
   - nuget restore examples.vs2013.sln
