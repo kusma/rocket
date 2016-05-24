@@ -1,3 +1,12 @@
+configurations {
+	ClientMode {
+		choices: { Client, Player };
+		description = "lol, player or client?!";
+		Client.description = "Enable networking code";
+		Player.description = "Disable networking code";
+	}
+}
+
 nuget {
 	nuspec {
 		id = librocket;
@@ -20,20 +29,41 @@ nuget {
 	files {
 		include: { "..\lib\sync.h" };
 
-		[Win32, Release] {
-			lib: ..\VS2013\Win32\Release\librocket.lib;
+		[Win32, Release, Player] {
+			lib: ..\lib\VS2013\Win32\Release\librocket-player.lib;
 		}
 
-		[Win32, Debug] {
-			lib: ..\VS2013\Win32\Debug\librocketd.lib;
+		[Win32, Release, Client] {
+			lib: ..\lib\VS2013\Win32\Client Release\librocket.lib;
 		}
 
-		[x64, Release] {
-			lib: ..\VS2013\x64\Release\librocket.lib;
+		[Win32, Debug, Player] {
+			lib: ..\lib\VS2013\Win32\Debug\librocket-playerd.lib;
 		}
 
-		[x64,debug] {
-			lib: ..\VS2013\x64\Debug\librocketd.lib;
+		[Win32, Debug, Client] {
+			lib: ..\lib\VS2013\Win32\Debug Client\librocketd.lib;
 		}
+
+		[x64, Release, Player] {
+			lib: ..\lib\VS2013\x64\Release\librocket-player.lib;
+		}
+
+		[x64, Release, Client] {
+			lib: ..\lib\VS2013\x64\Release Client\librocket.lib;
+		}
+
+		[x64, Debug, Player] {
+			lib: ..\lib\VS2013\x64\Debug\librocketd.lib;
+		}
+
+		[x64, Debug, Client] {
+			lib: ..\lib\VS2013\x64\Debug Client\librocketd.lib;
+		}
+	}
+
+	targets {
+		[Player]
+			Defines += SYNC_PLAYER;
 	}
 }
