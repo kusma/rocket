@@ -9,9 +9,11 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
 
     qtHaveModule(websockets): QT += websockets
+    qtHaveModule(multimedia): QT += multimedia
 }
 
 !contains(QT, websockets): message("QWebSockets module not found, disabling websocket support...")
+!contains(QT, multimedia): message("QMultimedia module not found, disabling waveform support...")
 
 # Input
 HEADERS += syncclient.h \

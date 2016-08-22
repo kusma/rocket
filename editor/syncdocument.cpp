@@ -1,9 +1,15 @@
 #include "syncdocument.h"
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QDomDocument>
 #include <QTextStream>
 
+#ifdef QT_MULTIMEDIA_LIB
+#include <QAudioDecoder>
+#include <QAudioFormat>
+#endif
 
 SyncDocument::~SyncDocument()
 {
@@ -54,6 +60,12 @@ SyncDocument *SyncDocument::load(const QString &fileName)
 	if (!rowsParam.isNull()) {
 		QString rowsString = rowsParam.nodeValue();
 		ret->setRows(rowsString.toInt());
+	}
+
+	QDomNode waveformParam = attribs.namedItem("waveform");
+	if (!waveformParam.isNull()) {
+		QFileInfo fileInfo(file);
+		ret->setWaveform(fileInfo.dir().absoluteFilePath(waveformParam.nodeValue()));
 	}
 
 	QDomNodeList trackNodes =
@@ -140,6 +152,10 @@ bool SyncDocument::save(const QString &fileName)
 	QDomDocument doc;
 	QDomElement rootNode = doc.createElement("sync");
 	rootNode.setAttribute("rows", getRows());
+	if (!waveform.isEmpty()) {
+		QFileInfo fileInfo(fileName);
+		rootNode.setAttribute("waveform", fileInfo.dir().relativeFilePath(waveform));
+	}
 	doc.appendChild(rootNode);
 
 	rootNode.appendChild(doc.createTextNode("\n\t"));
@@ -192,6 +208,45 @@ bool SyncDocument::save(const QString &fileName)
 	undoStack.setClean();
 	return true;
 }
+
+void SyncDocument::setWaveform(const QString &waveform)
+{
+	this->waveform = waveform;
+
+#ifdef QT_MULTIMEDIA_LIB
+	QAudioFormat desiredFormat;
+	desiredFormat.setChannelCount(1);
+	desiredFormat.setCodec("audio/pcm");
+	desiredFormat.setSampleType(QAudioFormat::Float);
+	desiredFormat.setSampleRate(44100);
+	desiredFormat.setSampleSize(32);
+
+	decoder = new QAudioDecoder(this);
+	decoder->setAudioFormat(desiredFormat);
+	decoder->setSourceFilename(waveform);
+
+	connect(decoder, SIGNAL(bufferReady()), this, SLOT(onBufferReady()));
+	decoder->start();
+
+	// TODO: invalidate view
+#endif
+}
+
+#ifdef QT_MULTIMEDIA_LIB
+void SyncDocument::onBufferReady()
+{
+	QAudioBuffer buffer = decoder->read();
+
+	Q_ASSERT(buffer.format().sampleType() == QAudioFormat::Float);
+	Q_ASSERT(buffer.format().channelCount() == 1);
+	Q_ASSERT(buffer.byteCount() % sizeof(float) == 0);
+
+	const float *data = buffer.constData<float>();
+	for (int i = 0; i < buffer.byteCount() / int(sizeof(float)); ++i)
+		qDebug() << data[i];
+}
+#endif
+
 
 bool SyncDocument::isRowBookmark(int row) const
 {

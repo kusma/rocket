@@ -12,6 +12,10 @@
 #include "synctrack.h"
 #include "syncpage.h"
 
+#ifdef QT_MULTIMEDIA_LIB
+class QAudioDecoder;
+#endif
+
 class SyncDocument : public QObject {
 	Q_OBJECT
 public:
@@ -60,6 +64,9 @@ public:
 	static SyncDocument *load(const QString &fileName);
 	bool save(const QString &fileName);
 
+	void setWaveform(const QString &waveform);
+	QString getWaveform() const { return waveform; }
+
 	bool isRowBookmark(int row) const;
 	void toggleRowBookmark(int row);
 
@@ -101,6 +108,10 @@ public:
 
 private:
 	QList<SyncTrack*> tracks;
+	QString waveform;
+#ifdef QT_MULTIMEDIA_LIB
+	QAudioDecoder *decoder;
+#endif
 	QList<int> rowBookmarks;
 	QList<SyncPage*> syncPages;
 	SyncPage *defaultSyncPage;
@@ -115,6 +126,10 @@ signals:
 
 private slots:
 	void onCleanChanged(bool clean) { emit modifiedChanged(!clean); }
+
+#ifdef QT_MULTIMEDIA_LIB
+	void onBufferReady();
+#endif
 };
 
 #endif // !defined(SYNCDOCUMENT_H)

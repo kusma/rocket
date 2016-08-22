@@ -1,4 +1,4 @@
-<sync rows="128">
+<sync rows="128" waveform="tune.ogg">
 	<tracks>
 		<track name="clear.r">
 			<key row="0" interpolation="1" value="0.5"/>
