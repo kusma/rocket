@@ -63,6 +63,15 @@ private:
 	void setPaused(bool pause);
 	void setSyncClient(SyncClient *syncClient);
 
+	bool tcpLocalOnly() { return settings.value("TcpLocalOnly", true).toBool(); }
+	uint tcpPort() { return settings.value("TcpPort", 1338).toUInt(); }
+	void tcpListen();
+#ifdef QT_WEBSOCKETS_LIB
+	uint wsPort() { return settings.value("WsPort", 1339).toUInt(); }
+	bool wsLocalOnly() { return settings.value("WsLocalOnly", true).toBool(); }
+	void wsListen();
+#endif
+
 public slots:
 	void fileNew();
 
@@ -70,7 +79,6 @@ private slots:
 	void fileOpen();
 	void fileSave();
 	void fileSaveAs();
-	void fileRemoteExport();
 	void openRecentFile();
 	void fileQuit();
 
@@ -91,6 +99,14 @@ private slots:
 
 	void editPreviousBookmark();
 	void editNextBookmark();
+
+	void remoteExport();
+	void remoteTcpListen();
+	void remoteTcpSetPort();
+#ifdef QT_WEBSOCKETS_LIB
+	void remoteWsListen();
+	void remoteWsSetPort();
+#endif
 
 	void onEditRowChanged(int row);
 	void onPosChanged(int col, int row);

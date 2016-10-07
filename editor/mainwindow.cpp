@@ -60,19 +60,37 @@ MainWindow::MainWindow() :
 	tcpServer = new QTcpServer();
 	connect(tcpServer, SIGNAL(newConnection()),
 	        this, SLOT(onNewTcpConnection()));
-
-	if (!tcpServer->listen(QHostAddress::Any, 1338))
-		statusBar()->showMessage(QString("Could not start server: %1").arg(tcpServer->errorString()));
+	tcpListen();
 
 #ifdef QT_WEBSOCKETS_LIB
 	wsServer = new QWebSocketServer("Rocket Editor", QWebSocketServer::NonSecureMode);
 	connect(wsServer, SIGNAL(newConnection()),
 	        this, SLOT(onNewWsConnection()));
-
-	if (!wsServer->listen(QHostAddress::Any, 1339))
-		statusBar()->showMessage(QString("Could not start server: %1").arg(wsServer->errorString()));
+	wsListen();
 #endif
 }
+
+void MainWindow::tcpListen()
+{
+	if (tcpServer->isListening())
+		tcpServer->close();
+
+	QHostAddress::SpecialAddress specialAddress = tcpLocalOnly() ? QHostAddress::LocalHost : QHostAddress::Any;
+	if (!tcpServer->listen(specialAddress, tcpPort()))
+		statusBar()->showMessage(QString("Could not start server: %1").arg(tcpServer->errorString()));
+}
+
+#ifdef QT_WEBSOCKETS_LIB
+void MainWindow::wsListen()
+{
+	if (wsServer->isListening())
+		wsServer->close();
+
+	QHostAddress::SpecialAddress specialAddress = wsLocalOnly() ? QHostAddress::LocalHost : QHostAddress::Any;
+	if (!wsServer->listen(specialAddress, wsPort()))
+		statusBar()->showMessage(QString("Could not start server: %1").arg(wsServer->errorString()));
+}
+#endif
 
 void MainWindow::showEvent(QShowEvent *event)
 {
@@ -129,7 +147,7 @@ void MainWindow::createMenuBar()
 	fileMenu->addAction(QIcon::fromTheme("document-save"), "&Save", this, SLOT(fileSave()), QKeySequence::Save);
 	fileMenu->addAction(QIcon::fromTheme("document-save-as"),"Save &As", this, SLOT(fileSaveAs()), QKeySequence::SaveAs);
 	fileMenu->addSeparator();
-	fileMenu->addAction("Remote &Export", this, SLOT(fileRemoteExport()), Qt::CTRL + Qt::Key_E);
+
 	recentFilesMenu = fileMenu->addMenu(QIcon::fromTheme("document-open-recent"), "Recent &Files");
 	for (int i = 0; i < 5; ++i) {
 		recentFileActions[i] = recentFilesMenu->addAction(QIcon::fromTheme("document-open-recent"), "");
@@ -161,6 +179,50 @@ void MainWindow::createMenuBar()
 	editMenu->addSeparator();
 	editMenu->addAction("Previous Bookmark", this, SLOT(editPreviousBookmark()), Qt::ALT + Qt::Key_PageUp);
 	editMenu->addAction("Next Bookmark", this, SLOT(editNextBookmark()), Qt::ALT + Qt::Key_PageDown);
+
+	QMenu *remoteMenu = menuBar()->addMenu("&Remote");
+	remoteMenu->addAction("&Export", this, SLOT(remoteExport()), Qt::CTRL + Qt::Key_E);
+	remoteMenu->addSeparator();
+
+	QMenu *tcpListenMenu = remoteMenu->addMenu("&TCP Listen");
+	tcpListenMenu->addAction("Set Port", this, SLOT(remoteTcpSetPort()));
+	tcpListenMenu->addSeparator();
+
+	QAction *tcpListenLocal = tcpListenMenu->addAction("local", this, SLOT(remoteTcpListen()));
+	tcpListenLocal->setCheckable(true);
+	tcpListenLocal->setChecked(tcpLocalOnly());
+	tcpListenLocal->setData(true);
+
+	QAction *tcpListenRemote = tcpListenMenu->addAction("remote", this, SLOT(remoteTcpListen()));
+	tcpListenRemote->setCheckable(true);
+	tcpListenRemote->setChecked(!tcpLocalOnly());
+	tcpListenRemote->setData(false);
+
+	QActionGroup *tcpActionGroup = new QActionGroup(this);
+	tcpActionGroup->setExclusive(true);
+	tcpActionGroup->addAction(tcpListenLocal);
+	tcpActionGroup->addAction(tcpListenRemote);
+
+#ifdef QT_WEBSOCKETS_LIB
+	QMenu *wsListenMenu = remoteMenu->addMenu("&WebSocket Listen");
+	wsListenMenu->addAction("Set Port", this, SLOT(remoteWsSetPort()));
+	wsListenMenu->addSeparator();
+
+	QAction *wsListenLocal = wsListenMenu->addAction("local", this, SLOT(remoteWsListen()));
+	wsListenLocal->setCheckable(true);
+	wsListenLocal->setChecked(wsLocalOnly());
+	wsListenLocal->setData(true);
+
+	QAction *wsListenRemote = wsListenMenu->addAction("remote", this, SLOT(remoteWsListen()));
+	wsListenRemote->setCheckable(true);
+	wsListenRemote->setChecked(!wsLocalOnly());
+	wsListenRemote->setData(false);
+
+	QActionGroup *wsActionGroup = new QActionGroup(this);
+	wsActionGroup->setExclusive(true);
+	wsActionGroup->addAction(wsListenLocal);
+	wsActionGroup->addAction(wsListenRemote);
+#endif
 }
 
 void MainWindow::createStatusBar()
@@ -368,13 +430,7 @@ void MainWindow::fileSave()
 		return fileSaveAs();
 
 	if (!doc->save(doc->fileName))
-		fileRemoteExport();
-}
-
-void MainWindow::fileRemoteExport()
-{
-	if (syncClient)
-		syncClient->sendSaveCommand();
+		remoteExport();
 }
 
 void MainWindow::openRecentFile()
@@ -490,6 +546,54 @@ void MainWindow::editNextBookmark()
 {
 	currentTrackView->editNextBookmark();
 }
+
+void MainWindow::remoteExport()
+{
+	if (syncClient)
+		syncClient->sendSaveCommand();
+}
+
+void MainWindow::remoteTcpListen()
+{
+	QAction *action = qobject_cast<QAction *>(sender());
+	if (action) {
+		settings.setValue("TcpLocalOnly", action->data().toBool());
+		tcpListen();
+	}
+}
+
+void MainWindow::remoteTcpSetPort()
+{
+	bool ok = false;
+	int newPort = QInputDialog::getInt(this, "Set TCP port", "", tcpPort(), 0, USHRT_MAX, 1, &ok);
+	if (ok) {
+		settings.setValue("TcpPort", newPort);
+		tcpListen();
+	}
+}
+
+#ifdef QT_WEBSOCKETS_LIB
+
+void MainWindow::remoteWsListen()
+{
+	QAction *action = qobject_cast<QAction *>(sender());
+	if (action) {
+		settings.setValue("WsLocalOnly", action->data().toBool());
+		wsListen();
+	}
+}
+
+void MainWindow::remoteWsSetPort()
+{
+	bool ok = false;
+	int newPort = QInputDialog::getInt(this, "Set WebSocket port", "", wsPort(), 0, USHRT_MAX, 1, &ok);
+	if (ok) {
+		settings.setValue("WsPort", newPort);
+		wsListen();
+	}
+}
+
+#endif
 
 void MainWindow::onPosChanged(int col, int row)
 {
