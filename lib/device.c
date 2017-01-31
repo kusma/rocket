@@ -488,25 +488,26 @@ sockerr:
 
 #endif /* !defined(SYNC_PLAYER) */
 
-static int create_track(struct sync_device *d, const char *name)
+struct sync_track *create_track(const char *name)
 {
-	void *tmp;
-	struct sync_track *t;
-	assert(find_track(d, name) < 0);
-
-	t = malloc(sizeof(*t));
+	struct sync_track *t = malloc(sizeof(*t));
 	if (!t)
-		return -1;
+		return NULL;
 
 	t->name = strdup(name);
 	t->keys = NULL;
 	t->num_keys = 0;
+	return t;
+}
+
+static int insert_track(struct sync_device *d, struct sync_track *t)
+{
+	void *tmp;
+	assert(find_track(d, t->name) < 0);
 
 	tmp = realloc(d->tracks, sizeof(d->tracks[0]) * (d->num_tracks + 1));
-	if (!tmp) {
-		free(t);
+	if (!tmp)
 		return -1;
-	}
 
 	d->tracks = tmp;
 	d->tracks[d->num_tracks++] = t;
@@ -522,11 +523,9 @@ const struct sync_track *sync_get_track(struct sync_device *d,
 	if (idx >= 0)
 		return d->tracks[idx];
 
-	idx = create_track(d, name);
-	if (idx < 0)
+	t = create_track(name);
+	if (!t)
 		return NULL;
-
-	t = d->tracks[idx];
 
 #ifndef SYNC_PLAYER
 	if (d->sock != INVALID_SOCKET)
@@ -534,6 +533,11 @@ const struct sync_track *sync_get_track(struct sync_device *d,
 	else
 #endif
 		read_track_data(d, t);
+
+	if (insert_track(d, t) < 0) {
+		free(t);
+		return NULL;
+	}
 
 	return t;
 }
