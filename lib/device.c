@@ -6,6 +6,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <sys/stat.h>
+
+#ifdef WIN32
+#include <direct.h>
+#define S_ISDIR(m) (((m)& S_IFMT) == S_IFDIR)
+#endif
+
 static int find_track(struct sync_device *d, const char *name)
 {
 	int i;
@@ -295,6 +302,41 @@ static int read_track_data(struct sync_device *d, struct sync_track *t)
 	return 0;
 }
 
+static int create_leading_dirs(const char *base)
+{
+	char *pos, buf[FILENAME_MAX];
+
+	strncpy(buf, base, sizeof(buf));
+	buf[sizeof(buf) - 1] = '\0';
+	pos = buf + (*buf == '/');
+
+	while (1) {
+		struct stat st;
+
+		pos = strchr(pos, '/');
+		if (!pos)
+			break;
+		*pos = '\0';
+
+		/* does path exist, but isn't a dir? */
+		if (!stat(buf, &st)) {
+			if (!S_ISDIR(st.st_mode))
+				return -1;
+		} else {
+#ifdef WIN32
+			if (_mkdir(buf))
+#else
+			if (mkdir(buf, 0777))
+#endif
+				return -1;
+		}
+
+		*pos++ = '/';
+	}
+
+	return 0;
+}
+
 static int save_track(const struct sync_track *t, const char *path)
 {
 	int i;
@@ -317,11 +359,16 @@ static int save_track(const struct sync_track *t, const char *path)
 int sync_save_tracks(const struct sync_device *d)
 {
 	int i;
+
+	if (create_leading_dirs(d->base))
+		return -1;
+
 	for (i = 0; i < (int)d->num_tracks; ++i) {
 		const struct sync_track *t = d->tracks[i];
 		if (save_track(t, sync_track_path(d->base, t->name)))
 			return -1;
 	}
+
 	return 0;
 }
 
