@@ -54,8 +54,7 @@ double sync_get_val(const struct sync_track *t, double row)
 	case KEY_RAMP:
 		return key_ramp(t->keys + idx, row);
 	default:
-		assert(0);
-		return 0.0f;
+		unreachable("unexpected key-type");
 	}
 }
 
