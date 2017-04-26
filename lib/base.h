@@ -18,6 +18,22 @@
  #endif
 #endif
 
+#ifdef _MSC_VER
+ #define unreachable(str) \
+do { \
+	assert(!str); \
+	__assume(0); \
+} while (0);
+#elif defined(__GNUC__)
+ #define unreachable(str) \
+do { \
+	assert(!str); \
+	__builtin_unreachable(); \
+} while (0);
+#else
+ #define unreachable(str) assert(!str)
+#endif
+
 /* configure lacking CRT features */
 #ifdef _MSC_VER
  #if _MSC_VER < 1900
