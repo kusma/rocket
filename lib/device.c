@@ -195,7 +195,7 @@ static SOCKET server_connect(const char *host, unsigned short nport)
 	return sock;
 }
 
-#else
+#endif
 
 void sync_set_io_cb(struct sync_device *d, struct sync_io_cb *cb)
 {
@@ -203,8 +203,6 @@ void sync_set_io_cb(struct sync_device *d, struct sync_io_cb *cb)
 	d->io_cb.read = cb->read;
 	d->io_cb.close = cb->close;
 }
-
-#endif
 
 #ifdef NEED_STRDUP
 static inline char *rocket_strdup(const char *str)
