@@ -277,11 +277,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="client.c" />
     <ClCompile Include="device.c" />
     <ClCompile Include="track.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="base.h" />
+    <ClInclude Include="client.h" />
     <ClInclude Include="device.h" />
     <ClInclude Include="sync.h" />
     <ClInclude Include="track.h" />

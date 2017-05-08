@@ -35,6 +35,7 @@ else
 endif
 
 LIB_OBJS = \
+	lib/client.o \
 	lib/device.o \
 	lib/track.o
 
