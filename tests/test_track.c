@@ -2,7 +2,7 @@
 #include "../lib/track.h"
 #include "../lib/sync.h"
 
-int test_track_basics()
+static int test_track_basics()
 {
 	struct sync_track t;
 	t.name = "dummy";
@@ -22,8 +22,9 @@ int test_track_basics()
 	return 0;
 }
 
-struct sync_track *make_track(const char *name,
-                              struct track_key keys[], int num_keys)
+static struct sync_track *make_track(const char *name,
+                                     struct track_key keys[],
+                                     int num_keys)
 {
 	int i;
 	struct sync_track *t = malloc(sizeof(*t));
@@ -41,7 +42,7 @@ struct sync_track *make_track(const char *name,
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
-int test_sync_get_val_step()
+static int test_sync_get_val_step()
 {
 	struct track_key keys[] = {
 		{ 100, 10.0f, KEY_STEP },
@@ -62,7 +63,7 @@ int test_sync_get_val_step()
 	return 0;
 }
 
-int test_sync_get_val_linear()
+static int test_sync_get_val_linear()
 {
 	struct track_key keys[] = {
 		{ 100, 10.0f, KEY_LINEAR },
@@ -91,7 +92,7 @@ int test_sync_get_val_linear()
 	return 0;
 }
 
-int test_sync_get_val_smooth()
+static int test_sync_get_val_smooth()
 {
 	struct track_key keys[] = {
 		{ 100, 10.0f, KEY_SMOOTH },
@@ -120,7 +121,7 @@ int test_sync_get_val_smooth()
 	return 0;
 }
 
-int test_sync_get_val_ramp()
+static int test_sync_get_val_ramp()
 {
 	struct track_key keys[] = {
 		{ 100, 10.0f, KEY_RAMP },
