@@ -8,6 +8,11 @@ int test_report(void);
 #define TEST_RUN(test) test_run(#test, test)
 #define TEST_FAIL(reason) test_fail(__FILE__, __LINE__, "%s", reason)
 
+#define ASSERT_IS_TRUE(expr) do { \
+		if (!(expr)) \
+			test_fail(__FILE__, __LINE__, "assertion \"%s\" unexpectedly failed\n", #expr); \
+	} while (0)
+
 #define ASSERT_INT_EQUAL(actual, expected) do { \
 		if ((actual) != (expected)) \
 			test_fail(__FILE__, __LINE__, "expected: %d, got: %d\n", expected, actual); \

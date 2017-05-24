@@ -49,9 +49,11 @@ examples/%$X: LDLIBS += $(OPENGL_LIBS) $(SDL_LIBS)
 tests/test_%$X: tests/test_%.c tests/test.o
 	 $(LINK.c) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
+tests/test_device$X: lib/librocket.a
 tests/test_track$X: lib/librocket.a
 
-check: tests/test_track$X
+check: tests/test_device$X tests/test_track$X
+	tests/test_device$X && \
 	tests/test_track$X
 
 clean:
