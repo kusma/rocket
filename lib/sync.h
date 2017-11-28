@@ -41,6 +41,7 @@ int sync_save_tracks(const struct sync_device *);
 struct sync_io_cb {
 	void *(*open)(const char *filename, const char *mode);
 	size_t (*read)(void *ptr, size_t size, size_t nitems, void *stream);
+	size_t (*write)(const void *ptr, size_t size, size_t nitems, void *stream);
 	int (*close)(void *stream);
 };
 void sync_set_io_cb(struct sync_device *d, struct sync_io_cb *cb);

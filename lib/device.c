@@ -201,6 +201,7 @@ void sync_set_io_cb(struct sync_device *d, struct sync_io_cb *cb)
 {
 	d->io_cb.open = cb->open;
 	d->io_cb.read = cb->read;
+	d->io_cb.write = cb->write;
 	d->io_cb.close = cb->close;
 }
 
@@ -239,6 +240,7 @@ struct sync_device *sync_create_device(const char *base)
 
 	d->io_cb.open = (void *(*)(const char *, const char *))fopen;
 	d->io_cb.read = (size_t (*)(void *, size_t, size_t, void *))fread;
+	d->io_cb.write = (size_t (*)(const void *, size_t, size_t, void *))fwrite;
 	d->io_cb.close = (int (*)(void *))fclose;
 
 	return d;
@@ -295,22 +297,22 @@ static int read_track_data(struct sync_device *d, struct sync_track *t)
 	return 0;
 }
 
-static int save_track(const struct sync_track *t, const char *path)
+static int save_track(struct sync_device *d, const struct sync_track *t)
 {
 	int i;
-	FILE *fp = fopen(path, "wb");
+	FILE *fp = d->io_cb.open(sync_track_path(d->base, t->name), "wb");
 	if (!fp)
 		return -1;
 
-	fwrite(&t->num_keys, sizeof(int), 1, fp);
+	d->io_cb.write(&t->num_keys, sizeof(int), 1, fp);
 	for (i = 0; i < (int)t->num_keys; ++i) {
 		char type = (char)t->keys[i].type;
-		fwrite(&t->keys[i].row, sizeof(int), 1, fp);
-		fwrite(&t->keys[i].value, sizeof(float), 1, fp);
-		fwrite(&type, sizeof(char), 1, fp);
+		d->io_cb.write(&t->keys[i].row, sizeof(int), 1, fp);
+		d->io_cb.write(&t->keys[i].value, sizeof(float), 1, fp);
+		d->io_cb.write(&type, sizeof(char), 1, fp);
 	}
 
-	fclose(fp);
+	d->io_cb.close(fp);
 	return 0;
 }
 
@@ -319,7 +321,7 @@ int sync_save_tracks(const struct sync_device *d)
 	int i;
 	for (i = 0; i < (int)d->num_tracks; ++i) {
 		const struct sync_track *t = d->tracks[i];
-		if (save_track(t, sync_track_path(d->base, t->name)))
+		if (save_track(d, t))
 			return -1;
 	}
 	return 0;
