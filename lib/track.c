@@ -34,6 +34,11 @@ void sync_update_poly(struct sync_track *t)
 		default:
 			assert(0);
 		}
+		double scale = 1.0 / (k[1].row - k[0].row);
+		b *= scale;
+		c *= scale * scale;
+		d *= scale * scale * scale;
+
 		k->b = b;
 		k->c = c;
 		k->d = d;
@@ -63,7 +68,7 @@ double sync_get_val(const struct sync_track *t, double row)
 		return t->keys[t->num_keys - 1].a;
 
 	k = t->keys + idx;
-	x = (row - t->keys[idx].row) / (t->keys[idx + 1].row - t->keys[idx].row);
+	x = row - t->keys[idx].row;
 	return k->a + (k->b + (k->c + k->d * x) * x) * x;
 }
 
