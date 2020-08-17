@@ -15,7 +15,7 @@ enum key_type {
 
 struct track_key {
 	int row;
-	float value;
+	float a, b, c, d;
 	enum key_type type;
 };
 
@@ -33,6 +33,8 @@ static inline int key_idx_floor(const struct sync_track *t, int row)
 		idx = -idx - 2;
 	return idx;
 }
+
+void sync_update_poly(struct sync_track *t);
 
 #ifndef SYNC_PLAYER
 int sync_set_key(struct sync_track *, const struct track_key *);

@@ -322,12 +322,14 @@ static int read_track_data(struct sync_device *d, struct sync_track *t)
 		struct track_key *key = t->keys + i;
 		char type;
 		d->io_cb.read(&key->row, sizeof(int), 1, fp);
-		d->io_cb.read(&key->value, sizeof(float), 1, fp);
+		d->io_cb.read(&key->a, sizeof(float), 1, fp);
 		d->io_cb.read(&type, sizeof(char), 1, fp);
 		key->type = (enum key_type)type;
 	}
 
 	d->io_cb.close(fp);
+
+	sync_update_poly(t);
 	return 0;
 }
 
@@ -378,7 +380,7 @@ static int save_track(const struct sync_track *t, const char *path)
 	for (i = 0; i < (int)t->num_keys; ++i) {
 		char type = (char)t->keys[i].type;
 		fwrite(&t->keys[i].row, sizeof(int), 1, fp);
-		fwrite(&t->keys[i].value, sizeof(float), 1, fp);
+		fwrite(&t->keys[i].a, sizeof(float), 1, fp);
 		fwrite(&type, sizeof(char), 1, fp);
 	}
 
@@ -440,7 +442,7 @@ static int handle_set_key_cmd(SOCKET sock, struct sync_device *data)
 	v.i = ntohl(v.i);
 
 	key.row = ntohl(row);
-	key.value = v.f;
+	key.a = v.f;
 
 	if (type >= KEY_TYPE_COUNT || track >= data->num_tracks)
 		return -1;

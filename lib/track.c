@@ -6,11 +6,48 @@
 #include "track.h"
 #include "base.h"
 
+void sync_update_poly(struct sync_track *t)
+{
+	for (int i = 0; i < t->num_keys - 1; ++i) {
+		struct track_key *k = t->keys + i;
+		double mag = t->keys[i + 1].a - t->keys[i].a;
+
+		/* set up curve-coefficients according to key-type */
+		double b = 0.0, c = 0.0, d = 0.0;
+		switch (k[0].type) {
+		case KEY_STEP:
+			break;
+
+		case KEY_LINEAR:
+			b = mag;
+			break;
+
+		case KEY_SMOOTH:
+			c =  3 * mag;
+			d = -2 * mag;
+			break;
+
+		case KEY_RAMP:
+			c = mag;
+			break;
+
+		default:
+			assert(0);
+		}
+		k->b = b;
+		k->c = c;
+		k->d = d;
+	}
+	t->keys[t->num_keys - 1].b = 0.0f;
+	t->keys[t->num_keys - 1].c = 0.0f;
+	t->keys[t->num_keys - 1].d = 0.0f;
+}
+
 double sync_get_val(const struct sync_track *t, double row)
 {
 	int idx, irow;
-	double a, b, c, d;
-	double x, slope;
+	struct track_key *k;
+	double x;
 
 	/* If we have no keys at all, return a constant 0 */
 	if (!t->num_keys)
@@ -21,42 +58,13 @@ double sync_get_val(const struct sync_track *t, double row)
 
 	/* at the edges, return the first/last value */
 	if (idx < 0)
-		return t->keys[0].value;
+		return t->keys[0].a;
 	if (idx > (int)t->num_keys - 2)
-		return t->keys[t->num_keys - 1].value;
+		return t->keys[t->num_keys - 1].a;
 
-	a = t->keys[idx].value;
-	slope = t->keys[idx + 1].value - t->keys[idx].value;
-
-	/* set up curve-coefficients according to key-type */
-	switch (t->keys[idx].type) {
-	case KEY_STEP:
-		b = c = d = 0.0f;
-		break;
-
-	case KEY_LINEAR:
-		b = slope;
-		c = d = 0.0f;
-		break;
-
-	case KEY_SMOOTH:
-		b =  0.0f;
-		c =  3 * slope;
-		d = -2 * slope;
-		break;
-
-	case KEY_RAMP:
-		b = d = 0.0f;
-		c = slope;
-		break;
-
-	default:
-		assert(0);
-		return 0.0f;
-	}
-
+	k = t->keys + idx;
 	x = (row - t->keys[idx].row) / (t->keys[idx + 1].row - t->keys[idx].row);
-	return a + (b + (c + d * x) * x) * x;
+	return k->a + (k->b + (k->c + k->d * x) * x) * x;
 }
 
 int sync_find_key(const struct sync_track *t, int row)
@@ -99,6 +107,7 @@ int sync_set_key(struct sync_track *t, const struct track_key *k)
 		    sizeof(struct track_key) * (t->num_keys - idx - 1));
 	}
 	t->keys[idx] = *k;
+	sync_update_poly(t);
 	return 0;
 }
 
